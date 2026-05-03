@@ -1,9 +1,10 @@
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
-import joblib
 import shap
 import numpy as np
+import onnxruntime as rt
+import json
 
 # Sayfa ayarları her zaman en üstte olmalıdır
 st.set_page_config(page_title="Banka Churn Risk Paneli", page_icon="🏦", layout="wide")
@@ -26,13 +27,17 @@ if 'base_risk' not in st.session_state:
 @st.cache_resource
 def load_local_model():
     try:
-        pack = joblib.load('churn_thesis_model.pkl')
-        return pack['model'], pack['scaler'], pack['features']
+        sess = rt.InferenceSession('churn_model.onnx', providers=["CPUExecutionProvider"])
+        with open('scaler_params.json', 'r') as f:
+            scaler_params = json.load(f)
+        with open('features.json', 'r') as f:
+            features = json.load(f)
+        return sess, scaler_params, features
     except Exception as e:
         st.error(f"Model dosyası yüklenemedi: {e}")
         return None, None, None
 
-local_model, local_scaler, expected_features = load_local_model()
+_onnx_sess, local_scaler_params, expected_features = load_local_model()
 
 # TAHMİN FONKSİYONU (API YERİNE BURAYI KULLANACAĞIZ)
 def make_prediction(data_dict):
@@ -40,15 +45,19 @@ def make_prediction(data_dict):
     # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
     df_input = pd.get_dummies(df_input, drop_first=True)
     # Eksik sütunları (expected_features) 0 ile dolduruyoruz
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-    df_input = df_input[expected_features]
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
     
-    # Scaling ve Tahmin
-    scaled_input = local_scaler.transform(df_input)
-    prob = local_model.predict_proba(scaled_input)[0][1]
-    pred = int(prob > 0.5)
+    # Scaling
+    mean = np.array(local_scaler_params['mean_'])
+    scale = np.array(local_scaler_params['scale_'])
+    scaled_input = (df_input.values - mean) / scale
+
+    # Tahmin
+    input_name = _onnx_sess.get_inputs()[0].name
+    pred_onx = _onnx_sess.run(None, {input_name: scaled_input.astype(np.float32)})
+    prob_dict = pred_onx[1][0]
+    prob = prob_dict[1]
+    pred = int(pred_onx[0][0])
     
     return {
         "churn_tahmini": pred,
@@ -137,20 +146,29 @@ def main_dashboard():
                     st.metric(label="Risk Kategorisi", value=result["risk_seviyesi"])
                     
                     # SHAP ANALİZİ (Önceden yaptığımız düzeltmelerle)
-                    if local_model is not None:
+                    if _onnx_sess is not None:
                         st.markdown("### 💡 Neden Analizi (SHAP)")
                         df_input_shap = pd.DataFrame([customer_data])
                         df_input_shap = pd.get_dummies(df_input_shap, drop_first=True)
-                        for col in expected_features:
-                            if col not in df_input_shap.columns: df_input_shap[col] = 0
-                        df_input_shap = df_input_shap[expected_features]
-                        scaled_input_shap = local_scaler.transform(df_input_shap)
+                        df_input_shap = df_input_shap.reindex(columns=expected_features, fill_value=0)
+
+                        mean = np.array(local_scaler_params['mean_'])
+                        scale = np.array(local_scaler_params['scale_'])
+                        scaled_input_shap = (df_input_shap.values - mean) / scale
+
+                        def predict_fn(X):
+                            preds = []
+                            input_name = _onnx_sess.get_inputs()[0].name
+                            for row in X:
+                                pred_onx = _onnx_sess.run(None, {input_name: row.reshape(1, -1).astype(np.float32)})
+                                preds.append(pred_onx[1][0][1])
+                            return np.array(preds)
                         
-                        explainer = shap.TreeExplainer(local_model)
-                        shap_values = explainer.shap_values(scaled_input_shap, check_additivity=False)
+                        background = np.zeros((1, len(expected_features)))
+                        explainer = shap.KernelExplainer(predict_fn, background)
+                        shap_values = explainer.shap_values(scaled_input_shap.astype(np.float32))
                         
-                        if isinstance(shap_values, list): shap_vals = shap_values[1][0]
-                        else: shap_vals = shap_values[0, :, 1] if len(shap_values.shape) == 3 else shap_values[0]
+                        shap_vals = shap_values[0]
                         
                         shap_vals = np.array(shap_vals).flatten()
                         sort_inds = np.argsort(np.abs(shap_vals))

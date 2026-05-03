@@ -1,8 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import joblib
 import pandas as pd
 import numpy as np
+import onnxruntime as rt
+import json
 
 # 1. FastAPI uygulamasını başlatıyoruz
 app = FastAPI(
@@ -14,13 +15,14 @@ app = FastAPI(
 # 2. Kaydettiğimiz modeli ve ön işleme araçlarını hafızaya yüklüyoruz.
 # (API her çalıştığında sadece bir kere yüklenir, her istekte tekrar yüklenmez - Performans için kritik)
 try:
-    model_pack = joblib.load('churn_thesis_model.pkl')
-    model = model_pack['model']
-    scaler = model_pack['scaler']
-    expected_features = model_pack['features']
+    onnx_sess = rt.InferenceSession('churn_model.onnx', providers=["CPUExecutionProvider"])
+    with open('scaler_params.json', 'r') as f:
+        scaler_params = json.load(f)
+    with open('features.json', 'r') as f:
+        expected_features = json.load(f)
 except Exception as e:
     print(f"Model yüklenirken hata oluştu: {e}")
-    model, scaler, expected_features = None, None, None
+    onnx_sess, scaler_params, expected_features = None, None, None
 
 
 # 3. Pydantic ile Veri Doğrulama Şeması (Banka sisteminden gelecek verinin formatı)
@@ -47,11 +49,11 @@ def health_check():
 # 5. Endpoint: Asıl tahmini yapacak olan POST isteği
 @app.post("/predict")
 def predict_churn(customer: CustomerData):
-    if model is None:
+    if onnx_sess is None:
         raise HTTPException(status_code=500, detail="Makine öğrenmesi modeli yüklenemedi.")
 
     # Gelen veriyi bir sözlüğe (dictionary), sonra da Pandas DataFrame'e çeviriyoruz
-    customer_dict = customer.dict()
+    customer_dict = customer.model_dump()
     df_input = pd.DataFrame([customer_dict])
 
     # VERİ ÖN İŞLEME (Senin notebook'ta yaptığın işlemlerin simülasyonu)
@@ -60,20 +62,21 @@ def predict_churn(customer: CustomerData):
 
     # Modelin eğitiminde kullanılan sütun yapısı ile gelen verinin yapısını eşliyoruz.
     # Eksik dummy sütunlar varsa 0 olarak ekliyoruz.
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-
-    # Sütun sırasını modelin eğitildiği sıraya diziyoruz
-    df_input = df_input[expected_features]
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
 
     # Scaler ile sayısal verileri aynı eğitimdeki gibi ölçeklendiriyoruz
-    scaled_input = scaler.transform(df_input)
+    mean = np.array(scaler_params['mean_'])
+    scale = np.array(scaler_params['scale_'])
+    scaled_input = (df_input.values - mean) / scale
 
     # TAHMİN (Prediction)
-    # predict_proba ile sadece 0-1 değil, % kaç ihtimalle churn olacağını buluyoruz.
-    churn_probability = model.predict_proba(scaled_input)[0][1]
-    churn_prediction = int(model.predict(scaled_input)[0])
+    # onnx_sess.run ile sadece 0-1 değil, % kaç ihtimalle churn olacağını buluyoruz.
+    input_name = onnx_sess.get_inputs()[0].name
+    pred_onx = onnx_sess.run(None, {input_name: scaled_input.astype(np.float32)})
+    prob_dict = pred_onx[1][0]
+
+    churn_probability = prob_dict[1]
+    churn_prediction = int(pred_onx[0][0])
 
     # Riske göre kategori belirleme (Bankanın aksiyon alabilmesi için iş kuralı)
     if churn_probability >= 0.70:
