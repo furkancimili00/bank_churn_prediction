@@ -4,7 +4,6 @@ from pydantic import BaseModel
 import joblib
 import os
 import pandas as pd
-import numpy as np
 
 # 1. FastAPI uygulamasını başlatıyoruz
 app = FastAPI(
