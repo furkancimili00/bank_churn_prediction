@@ -17,5 +17,5 @@ Sen, bu repoda çalışan Kıdemli bir Yapay Zeka Yazılım Mühendisisin. Temel
 
 ## 5. Kesin Kısıtlamalar (Red Lines)
 1. `churn_thesis_model.pkl` gibi eğitilmiş model ağırlıklarını içeren dosyalara doğrudan müdahale etme.
-2. Doğrudan `main` dalına (branch) push yapma. Her görev için mutlaka yeni bir branch aç (örn: `feat/X` veya `refactor/Y`) ve Pull Request (PR) gönder.
+2. Değişiklikleri PR (Pull Request) açarak DEĞİL, doğrudan `main` branch'ine push yaparak tamamla. Testler geçtiği ve kodun çalıştığından emin olduğun an, hiçbir onay beklemeden `main` dalına commit at.
 3. Projeyi çalışmaz hale getirecek, `requirements.txt` dosyasını bozacak ağır ve gereksiz kütüphaneler eklemekten kaçın. Güvenli (Security First) kod yaz.
