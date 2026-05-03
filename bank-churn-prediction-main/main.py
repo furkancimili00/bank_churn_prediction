@@ -59,13 +59,8 @@ def predict_churn(customer: CustomerData):
     df_input = pd.get_dummies(df_input, drop_first=True)
 
     # Modelin eğitiminde kullanılan sütun yapısı ile gelen verinin yapısını eşliyoruz.
-    # Eksik dummy sütunlar varsa 0 olarak ekliyoruz.
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-
-    # Sütun sırasını modelin eğitildiği sıraya diziyoruz
-    df_input = df_input[expected_features]
+    # Eksik dummy sütunlar varsa 0 olarak ekliyoruz ve sıraya diziyoruz.
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
 
     # Scaler ile sayısal verileri aynı eğitimdeki gibi ölçeklendiriyoruz
     scaled_input = scaler.transform(df_input)
