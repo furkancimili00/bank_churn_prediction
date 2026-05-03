@@ -26,6 +26,21 @@ except Exception as e:
 # 3. Pydantic ile Veri Doğrulama Şeması (Banka sisteminden gelecek verinin formatı)
 # Banka, API'ye bir müşteri verisi gönderdiğinde tam olarak bu değişkenleri ve tipleri göndermek zorundadır.
 class CustomerData(BaseModel):
+    """
+    Banka sisteminden gelecek müşteri verisi için doğrulama şeması.
+
+    Attributes:
+        CreditScore (int): Müşterinin kredi notu.
+        Geography (str): Müşterinin bulunduğu ülke.
+        Gender (str): Müşterinin cinsiyeti.
+        Age (int): Müşterinin yaşı.
+        Tenure (int): Müşterinin bankada geçirdiği süre (yıl olarak).
+        Balance (float): Müşterinin hesap bakiyesi.
+        NumOfProducts (int): Müşterinin kullandığı ürün sayısı.
+        HasCrCard (int): Müşterinin kredi kartı olup olmadığı (1: Evet, 0: Hayır).
+        IsActiveMember (int): Müşterinin aktif üye olup olmadığı (1: Evet, 0: Hayır).
+        EstimatedSalary (float): Müşterinin tahmini maaşı.
+    """
     CreditScore: int
     Geography: str
     Gender: str
@@ -40,18 +55,36 @@ class CustomerData(BaseModel):
 
 # 4. Endpoint: Sadece sistemin çalışıp çalışmadığını test etmek için
 @app.get("/")
-def health_check():
+def health_check() -> dict:
+    """
+    API'nin aktif olarak çalışıp çalışmadığını kontrol eden sağlık kontrolü uç noktası.
+
+    Returns:
+        dict: API durumu ve mesajını içeren sözlük.
+    """
     return {"status": "success", "message": "Churn Tahmin API aktif olarak çalışıyor."}
 
 
 # 5. Endpoint: Asıl tahmini yapacak olan POST isteği
 @app.post("/predict")
-def predict_churn(customer: CustomerData):
+def predict_churn(customer: CustomerData) -> dict:
+    """
+    Gelen müşteri verilerine dayanarak müşterinin bankayı terk etme (churn) ihtimalini tahmin eder.
+
+    Args:
+        customer (CustomerData): Müşteriye ait demografik ve finansal bilgiler.
+
+    Returns:
+        dict: Churn tahmini, ihtimali, risk seviyesi ve işlem durum mesajını içeren sözlük.
+
+    Raises:
+        HTTPException: Eğer makine öğrenmesi modeli yüklenemediyse 500 hatası döndürür.
+    """
     if model is None:
         raise HTTPException(status_code=500, detail="Makine öğrenmesi modeli yüklenemedi.")
 
     # Gelen veriyi bir sözlüğe (dictionary), sonra da Pandas DataFrame'e çeviriyoruz
-    customer_dict = customer.dict()
+    customer_dict = customer.model_dump()
     df_input = pd.DataFrame([customer_dict])
 
     # VERİ ÖN İŞLEME (Senin notebook'ta yaptığın işlemlerin simülasyonu)
@@ -59,13 +92,8 @@ def predict_churn(customer: CustomerData):
     df_input = pd.get_dummies(df_input, drop_first=True)
 
     # Modelin eğitiminde kullanılan sütun yapısı ile gelen verinin yapısını eşliyoruz.
-    # Eksik dummy sütunlar varsa 0 olarak ekliyoruz.
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-
-    # Sütun sırasını modelin eğitildiği sıraya diziyoruz
-    df_input = df_input[expected_features]
+    # Eksik dummy sütunlar varsa 0 olarak ekliyoruz. Ve sütun sırasını modelin eğitildiği sıraya diziyoruz.
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
 
     # Scaler ile sayısal verileri aynı eğitimdeki gibi ölçeklendiriyoruz
     scaled_input = scaler.transform(df_input)

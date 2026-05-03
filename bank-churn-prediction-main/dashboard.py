@@ -24,7 +24,14 @@ if 'base_risk' not in st.session_state:
 # 2. MODEL YÜKLEME (CACHE)
 # ==========================================
 @st.cache_resource
-def load_local_model():
+def load_local_model() -> tuple:
+    """
+    Kayıtlı makine öğrenmesi modelini, ölçekleyiciyi (scaler) ve beklenen özellikleri yükler.
+
+    Returns:
+        tuple: (model, scaler, expected_features) değerlerini içeren demet (tuple).
+               Eğer yükleme başarısız olursa (None, None, None) döner.
+    """
     try:
         pack = joblib.load('churn_thesis_model.pkl')
         return pack['model'], pack['scaler'], pack['features']
@@ -35,15 +42,21 @@ def load_local_model():
 local_model, local_scaler, expected_features = load_local_model()
 
 # TAHMİN FONKSİYONU (API YERİNE BURAYI KULLANACAĞIZ)
-def make_prediction(data_dict):
+def make_prediction(data_dict: dict) -> dict:
+    """
+    Yerel modeli kullanarak müşteri verisine dayalı churn tahmini yapar.
+
+    Args:
+        data_dict (dict): Tahmin yapılacak müşteriye ait özellikler.
+
+    Returns:
+        dict: Churn tahmini, ihtimali ve risk seviyesini içeren sözlük.
+    """
     df_input = pd.DataFrame([data_dict])
     # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
     df_input = pd.get_dummies(df_input, drop_first=True)
-    # Eksik sütunları (expected_features) 0 ile dolduruyoruz
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-    df_input = df_input[expected_features]
+    # Eksik sütunları (expected_features) 0 ile dolduruyoruz ve sıralıyoruz
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
     
     # Scaling ve Tahmin
     scaled_input = local_scaler.transform(df_input)
@@ -59,7 +72,10 @@ def make_prediction(data_dict):
 # ==========================================
 # 3. GİRİŞ (LOGIN) EKRANI FONKSİYONU
 # ==========================================
-def login_screen():
+def login_screen() -> None:
+    """
+    Yöneticiler için şifreli giriş ekranını oluşturur ve işlemleri yönetir.
+    """
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
         st.markdown("<h1 style='text-align: center;'>🏦</h1>", unsafe_allow_html=True)
@@ -78,7 +94,10 @@ def login_screen():
 # ==========================================
 # 4. ANA PANEL (DASHBOARD) FONKSİYONU
 # ==========================================
-def main_dashboard():
+def main_dashboard() -> None:
+    """
+    Ana kontrol panelini oluşturur; tekil müşteri analizi, simülasyon ve toplu analiz sekmelerini içerir.
+    """
     st.sidebar.title("Yönetici Menüsü")
     st.sidebar.info("Hoş Geldiniz, **Şube Müdürü**")
     if st.sidebar.button("🚪 Güvenli Çıkış Yap"):
@@ -141,9 +160,7 @@ def main_dashboard():
                         st.markdown("### 💡 Neden Analizi (SHAP)")
                         df_input_shap = pd.DataFrame([customer_data])
                         df_input_shap = pd.get_dummies(df_input_shap, drop_first=True)
-                        for col in expected_features:
-                            if col not in df_input_shap.columns: df_input_shap[col] = 0
-                        df_input_shap = df_input_shap[expected_features]
+                        df_input_shap = df_input_shap.reindex(columns=expected_features, fill_value=0)
                         scaled_input_shap = local_scaler.transform(df_input_shap)
                         
                         explainer = shap.TreeExplainer(local_model)
@@ -229,7 +246,13 @@ def main_dashboard():
                     progress_bar.progress((index + 1) / total_rows)
 
                 results_df = pd.DataFrame(results_list).sort_values(by="Beklenen Kayıp (€)", ascending=False).reset_index(drop=True)
-                def color_risk(val): return f"color: {'red' if 'Yüksek' in str(val) else 'orange' if 'Orta' in str(val) else 'green'}"
+
+                def color_risk(val: str) -> str:
+                    """
+                    Tablodaki risk seviyesi değerine göre renklendirme stili döndürür.
+                    """
+                    return f"color: {'red' if 'Yüksek' in str(val) else 'orange' if 'Orta' in str(val) else 'green'}"
+
                 styled_df = results_df.style.map(color_risk, subset=['Risk Seviyesi']).format({"Müşteri Değeri (€)": "{:,.2f}", "Beklenen Kayıp (€)": "{:,.2f}"})
                 st.success("✅ Analiz tamamlandı!")
                 st.dataframe(styled_df, use_container_width=True)
