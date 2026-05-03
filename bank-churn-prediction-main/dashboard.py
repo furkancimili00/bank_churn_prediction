@@ -40,10 +40,7 @@ def make_prediction(data_dict):
     # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
     df_input = pd.get_dummies(df_input, drop_first=True)
     # Eksik sütunları (expected_features) 0 ile dolduruyoruz
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-    df_input = df_input[expected_features]
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
     
     # Scaling ve Tahmin
     scaled_input = local_scaler.transform(df_input)
@@ -141,9 +138,7 @@ def main_dashboard():
                         st.markdown("### 💡 Neden Analizi (SHAP)")
                         df_input_shap = pd.DataFrame([customer_data])
                         df_input_shap = pd.get_dummies(df_input_shap, drop_first=True)
-                        for col in expected_features:
-                            if col not in df_input_shap.columns: df_input_shap[col] = 0
-                        df_input_shap = df_input_shap[expected_features]
+                        df_input_shap = df_input_shap.reindex(columns=expected_features, fill_value=0)
                         scaled_input_shap = local_scaler.transform(df_input_shap)
                         
                         explainer = shap.TreeExplainer(local_model)
@@ -207,28 +202,41 @@ def main_dashboard():
             df = pd.read_csv(uploaded_file)
             if st.button("🚀 Tüm Listeyi Analiz Et ve Önceliklendir", use_container_width=True):
                 progress_bar = st.progress(0)
-                results_list = []
-                total_rows = len(df)
-                for index, row in df.iterrows():
-                    cust_row = {
-                        "CreditScore": int(row["CreditScore"]), "Geography": str(row["Geography"]), "Gender": str(row["Gender"]),
-                        "Age": int(row["Age"]), "Tenure": int(row["Tenure"]), "Balance": float(row["Balance"]),
-                        "NumOfProducts": int(row["NumOfProducts"]), "HasCrCard": int(row["HasCrCard"]),
-                        "IsActiveMember": int(row["IsActiveMember"]), "EstimatedSalary": float(row["EstimatedSalary"])
-                    }
-                    # TOPLU ANALİZDE DE YEREL TAHMİN KULLANILIYOR
-                    res_batch = make_prediction(cust_row)
-                    churn_prob = res_batch["churn_ihtimali"]
-                    c_value = cust_row["Balance"] + (cust_row["EstimatedSalary"] * 0.20)
-                    exp_loss = c_value * churn_prob
-                    results_list.append({
-                        "Müşteri ID": row.get("CustomerId", index), "Risk (%)": round(churn_prob * 100, 2),
-                        "Risk Seviyesi": res_batch["risk_seviyesi"], "Müşteri Değeri (€)": round(c_value, 2),
-                        "Beklenen Kayıp (€)": round(exp_loss, 2)
-                    })
-                    progress_bar.progress((index + 1) / total_rows)
 
-                results_df = pd.DataFrame(results_list).sort_values(by="Beklenen Kayıp (€)", ascending=False).reset_index(drop=True)
+                # Vektörel işlemlerle toplu analiz (Performans iyileştirmesi)
+                # Sadece modelin beklediği temel sütunları alıyoruz
+                cols_to_keep = ['CreditScore', 'Geography', 'Gender', 'Age', 'Tenure', 'Balance', 'NumOfProducts', 'HasCrCard', 'IsActiveMember', 'EstimatedSalary']
+                df_input = df[cols_to_keep].copy()
+
+                # Kategorik değişkenleri dönüştür
+                df_input = pd.get_dummies(df_input, drop_first=True)
+
+                # Beklenen sütunlarla eşleştir ve eksikleri 0 ile doldur
+                df_input = df_input.reindex(columns=expected_features, fill_value=0)
+
+                # Tüm veriyi tek seferde ölçeklendir ve tahmin et
+                scaled_input = local_scaler.transform(df_input)
+                probs = local_model.predict_proba(scaled_input)[:, 1]
+
+                # Riske göre kategorileri numpy select ile vektörel olarak oluştur
+                conditions = [probs > 0.7, probs > 0.4]
+                choices = ["Yüksek", "Orta"]
+                risk_levels = np.select(conditions, choices, default="Düşük")
+
+                # Finansal hesaplamalar
+                c_values = df["Balance"] + (df["EstimatedSalary"] * 0.20)
+                exp_losses = c_values * probs
+
+                # Sonuç DataFrame'ini oluştur
+                results_df = pd.DataFrame({
+                    "Müşteri ID": df.get("CustomerId", df.index),
+                    "Risk (%)": np.round(probs * 100, 2),
+                    "Risk Seviyesi": risk_levels,
+                    "Müşteri Değeri (€)": np.round(c_values, 2),
+                    "Beklenen Kayıp (€)": np.round(exp_losses, 2)
+                }).sort_values(by="Beklenen Kayıp (€)", ascending=False).reset_index(drop=True)
+
+                progress_bar.progress(1.0)
                 def color_risk(val): return f"color: {'red' if 'Yüksek' in str(val) else 'orange' if 'Orta' in str(val) else 'green'}"
                 styled_df = results_df.style.map(color_risk, subset=['Risk Seviyesi']).format({"Müşteri Değeri (€)": "{:,.2f}", "Beklenen Kayıp (€)": "{:,.2f}"})
                 st.success("✅ Analiz tamamlandı!")
