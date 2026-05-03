@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
-import joblib
+import skops.io as sio
 import shap
 import numpy as np
 
@@ -26,7 +26,9 @@ if 'base_risk' not in st.session_state:
 @st.cache_resource
 def load_local_model():
     try:
-        pack = joblib.load('churn_thesis_model.pkl')
+        # skops automatically trusts basic numpy and scikit-learn types.
+        # We do not dynamically trust get_untrusted_types() to prevent insecure deserialization.
+        pack = sio.load('churn_thesis_model.skops')
         return pack['model'], pack['scaler'], pack['features']
     except Exception as e:
         st.error(f"Model dosyası yüklenemedi: {e}")

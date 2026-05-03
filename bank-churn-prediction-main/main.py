@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import joblib
+import skops.io as sio
 import pandas as pd
 import numpy as np
 
@@ -14,7 +14,9 @@ app = FastAPI(
 # 2. Kaydettiğimiz modeli ve ön işleme araçlarını hafızaya yüklüyoruz.
 # (API her çalıştığında sadece bir kere yüklenir, her istekte tekrar yüklenmez - Performans için kritik)
 try:
-    model_pack = joblib.load('churn_thesis_model.pkl')
+    # skops automatically trusts basic numpy and scikit-learn types.
+    # We do not dynamically trust get_untrusted_types() to prevent insecure deserialization.
+    model_pack = sio.load('churn_thesis_model.skops')
     model = model_pack['model']
     scaler = model_pack['scaler']
     expected_features = model_pack['features']
