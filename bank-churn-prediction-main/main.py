@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import joblib
 import pandas as pd
 import numpy as np
+from utils import preprocess_data
 
 # 1. FastAPI uygulamasını başlatıyoruz
 app = FastAPI(
@@ -50,25 +51,11 @@ def predict_churn(customer: CustomerData):
     if model is None:
         raise HTTPException(status_code=500, detail="Makine öğrenmesi modeli yüklenemedi.")
 
-    # Gelen veriyi bir sözlüğe (dictionary), sonra da Pandas DataFrame'e çeviriyoruz
-    customer_dict = customer.dict()
-    df_input = pd.DataFrame([customer_dict])
+    # Gelen veriyi bir sözlüğe (dictionary) çeviriyoruz
+    customer_dict = customer.model_dump()
 
-    # VERİ ÖN İŞLEME (Senin notebook'ta yaptığın işlemlerin simülasyonu)
-    # Kategori verilerini (Geography, Gender) One-Hot Encoding'e dönüştürme:
-    df_input = pd.get_dummies(df_input, drop_first=True)
-
-    # Modelin eğitiminde kullanılan sütun yapısı ile gelen verinin yapısını eşliyoruz.
-    # Eksik dummy sütunlar varsa 0 olarak ekliyoruz.
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-
-    # Sütun sırasını modelin eğitildiği sıraya diziyoruz
-    df_input = df_input[expected_features]
-
-    # Scaler ile sayısal verileri aynı eğitimdeki gibi ölçeklendiriyoruz
-    scaled_input = scaler.transform(df_input)
+    # Veriyi modelin beklediği formata dönüştürür
+    scaled_input = preprocess_data(customer_dict, expected_features, scaler)
 
     # TAHMİN (Prediction)
     # predict_proba ile sadece 0-1 değil, % kaç ihtimalle churn olacağını buluyoruz.
