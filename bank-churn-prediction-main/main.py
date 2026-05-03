@@ -1,6 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 import joblib
+import os
 import pandas as pd
 import numpy as np
 
@@ -10,6 +12,30 @@ app = FastAPI(
     description="Müşterilerin bankayı terk etme (churn) riskini hesaplayan XAI destekli kurumsal API",
     version="1.0.0"
 )
+
+# Güvenlik Ayarları
+API_KEY = os.getenv("CHURN_API_KEY")
+API_KEY_NAME = "X-API-Key"
+api_key_header_scheme = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
+async def get_api_key(api_key: str = Depends(api_key_header_scheme)):
+    """
+    İstek başlığındaki API anahtarını doğrular.
+    Eğer CHURN_API_KEY ortam değişkeni ayarlanmamışsa, güvenlik nedeniyle tüm istekler reddedilir.
+    """
+    if not API_KEY:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="API anahtarı sunucu tarafında yapılandırılmamış.",
+        )
+
+    if api_key == API_KEY:
+        return api_key
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Geçersiz veya eksik API Anahtarı",
+    )
 
 # 2. Kaydettiğimiz modeli ve ön işleme araçlarını hafızaya yüklüyoruz.
 # (API her çalıştığında sadece bir kere yüklenir, her istekte tekrar yüklenmez - Performans için kritik)
@@ -45,7 +71,7 @@ def health_check():
 
 
 # 5. Endpoint: Asıl tahmini yapacak olan POST isteği
-@app.post("/predict")
+@app.post("/predict", dependencies=[Depends(get_api_key)])
 def predict_churn(customer: CustomerData):
     if model is None:
         raise HTTPException(status_code=500, detail="Makine öğrenmesi modeli yüklenemedi.")
