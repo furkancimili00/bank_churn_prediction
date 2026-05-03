@@ -40,10 +40,7 @@ def make_prediction(data_dict):
     # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
     df_input = pd.get_dummies(df_input, drop_first=True)
     # Eksik sütunları (expected_features) 0 ile dolduruyoruz
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-    df_input = df_input[expected_features]
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
     
     # Scaling ve Tahmin
     scaled_input = local_scaler.transform(df_input)
@@ -141,9 +138,7 @@ def main_dashboard():
                         st.markdown("### 💡 Neden Analizi (SHAP)")
                         df_input_shap = pd.DataFrame([customer_data])
                         df_input_shap = pd.get_dummies(df_input_shap, drop_first=True)
-                        for col in expected_features:
-                            if col not in df_input_shap.columns: df_input_shap[col] = 0
-                        df_input_shap = df_input_shap[expected_features]
+                        df_input_shap = df_input_shap.reindex(columns=expected_features, fill_value=0)
                         scaled_input_shap = local_scaler.transform(df_input_shap)
                         
                         explainer = shap.TreeExplainer(local_model)
