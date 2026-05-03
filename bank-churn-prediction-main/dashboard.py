@@ -61,6 +61,21 @@ def make_prediction(data_dict):
         "risk_seviyesi": "Yüksek" if prob > 0.7 else "Orta" if prob > 0.4 else "Düşük"
     }
 
+def make_batch_prediction(df_input):
+    """
+    Toplu tahmin için optimize edilmiş tahmin fonksiyonu.
+    """
+    # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
+    df_encoded = pd.get_dummies(df_input, drop_first=True)
+    # Eksik sütunları (expected_features) 0 ile dolduruyoruz
+    df_encoded = df_encoded.reindex(columns=expected_features, fill_value=0)
+
+    # Scaling ve Tahmin
+    scaled_input = local_scaler.transform(df_encoded)
+    probs = local_model.predict_proba(scaled_input)[:, 1]
+
+    return probs
+
 # ==========================================
 # 3. GİRİŞ (LOGIN) EKRANI FONKSİYONU
 # ==========================================
@@ -230,28 +245,34 @@ def main_dashboard():
                     else:
                         if st.button("🚀 Tüm Listeyi Analiz Et ve Önceliklendir", use_container_width=True):
                             progress_bar = st.progress(0)
-                            results_list = []
-                            total_rows = len(df)
-                            for index, row in df.iterrows():
-                                cust_row = {
-                                    "CreditScore": int(row["CreditScore"]), "Geography": str(row["Geography"]), "Gender": str(row["Gender"]),
-                                    "Age": int(row["Age"]), "Tenure": int(row["Tenure"]), "Balance": float(row["Balance"]),
-                                    "NumOfProducts": int(row["NumOfProducts"]), "HasCrCard": int(row["HasCrCard"]),
-                                    "IsActiveMember": int(row["IsActiveMember"]), "EstimatedSalary": float(row["EstimatedSalary"])
-                                }
-                                # TOPLU ANALİZDE DE YEREL TAHMİN KULLANILIYOR
-                                res_batch = make_prediction(cust_row)
-                                churn_prob = res_batch["churn_ihtimali"]
-                                c_value = cust_row["Balance"] + (cust_row["EstimatedSalary"] * 0.20)
-                                exp_loss = c_value * churn_prob
-                                results_list.append({
-                                    "Müşteri ID": row.get("CustomerId", index), "Risk (%)": round(churn_prob * 100, 2),
-                                    "Risk Seviyesi": res_batch["risk_seviyesi"], "Müşteri Değeri (€)": round(c_value, 2),
-                                    "Beklenen Kayıp (€)": round(exp_loss, 2)
-                                })
-                                progress_bar.progress((index + 1) / total_rows)
 
-                            results_df = pd.DataFrame(results_list).sort_values(by="Beklenen Kayıp (€)", ascending=False).reset_index(drop=True)
+                            # Vektörel işlemlerle toplu tahmin ve hesaplamalar
+                            df_input = df[required_columns].copy()
+
+                            probs = make_batch_prediction(df_input)
+
+                            c_values = df["Balance"] + (df["EstimatedSalary"] * 0.20)
+                            exp_losses = c_values * probs
+
+                            def get_risk_level(p):
+                                if p > 0.7: return "Yüksek"
+                                if p > 0.4: return "Orta"
+                                return "Düşük"
+
+                            risk_levels = [get_risk_level(p) for p in probs]
+                            customer_ids = df["CustomerId"] if "CustomerId" in df.columns else df.index
+
+                            results_df = pd.DataFrame({
+                                "Müşteri ID": customer_ids,
+                                "Risk (%)": np.round(probs * 100, 2),
+                                "Risk Seviyesi": risk_levels,
+                                "Müşteri Değeri (€)": np.round(c_values, 2),
+                                "Beklenen Kayıp (€)": np.round(exp_losses, 2)
+                            })
+
+                            progress_bar.progress(1.0)
+
+                            results_df = results_df.sort_values(by="Beklenen Kayıp (€)", ascending=False).reset_index(drop=True)
                             def color_risk(val): return f"color: {'red' if 'Yüksek' in str(val) else 'orange' if 'Orta' in str(val) else 'green'}"
                             styled_df = results_df.style.map(color_risk, subset=['Risk Seviyesi']).format({"Müşteri Değeri (€)": "{:,.2f}", "Beklenen Kayıp (€)": "{:,.2f}"})
                             st.success("✅ Analiz tamamlandı!")
