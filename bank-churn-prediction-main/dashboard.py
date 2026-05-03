@@ -34,6 +34,14 @@ def load_local_model():
 
 local_model, local_scaler, expected_features = load_local_model()
 
+@st.cache_resource
+def get_shap_explainer(_model):
+    """
+    SHAP model açıklayıcısını önbelleğe alır (caching).
+    TreeExplainer hesaplaması maliyetli olduğundan her render işleminde baştan hesaplanmasını engeller.
+    """
+    return shap.TreeExplainer(_model)
+
 # TAHMİN FONKSİYONU (API YERİNE BURAYI KULLANACAĞIZ)
 def make_prediction(data_dict):
     df_input = pd.DataFrame([data_dict])
@@ -146,7 +154,7 @@ def main_dashboard():
                         df_input_shap = df_input_shap[expected_features]
                         scaled_input_shap = local_scaler.transform(df_input_shap)
                         
-                        explainer = shap.TreeExplainer(local_model)
+                        explainer = get_shap_explainer(local_model)
                         shap_values = explainer.shap_values(scaled_input_shap, check_additivity=False)
                         
                         if isinstance(shap_values, list): shap_vals = shap_values[1][0]
