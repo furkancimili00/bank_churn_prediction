@@ -34,19 +34,26 @@ def load_local_model():
 
 local_model, local_scaler, expected_features = load_local_model()
 
+def preprocess_data(data_dict: dict) -> np.ndarray:
+    """
+    Verilen müşteri veri sözlüğünü DataFrame'e çevirir, One-Hot Encoding uygular,
+    beklenen özellikleri hizalar ve ölçeklendirir.
+
+    Args:
+        data_dict (dict): Müşteri bilgilerini içeren sözlük.
+
+    Returns:
+        np.ndarray: Model tahmini için hazır, ölçeklendirilmiş veri.
+    """
+    df_input = pd.DataFrame([data_dict])
+    df_input = pd.get_dummies(df_input, drop_first=True)
+    df_input = df_input.reindex(columns=expected_features, fill_value=0)
+    scaled_input = local_scaler.transform(df_input)
+    return scaled_input
+
 # TAHMİN FONKSİYONU (API YERİNE BURAYI KULLANACAĞIZ)
 def make_prediction(data_dict):
-    df_input = pd.DataFrame([data_dict])
-    # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
-    df_input = pd.get_dummies(df_input, drop_first=True)
-    # Eksik sütunları (expected_features) 0 ile dolduruyoruz
-    for col in expected_features:
-        if col not in df_input.columns:
-            df_input[col] = 0
-    df_input = df_input[expected_features]
-    
-    # Scaling ve Tahmin
-    scaled_input = local_scaler.transform(df_input)
+    scaled_input = preprocess_data(data_dict)
     prob = local_model.predict_proba(scaled_input)[0][1]
     pred = int(prob > 0.5)
     
@@ -139,12 +146,7 @@ def main_dashboard():
                     # SHAP ANALİZİ (Önceden yaptığımız düzeltmelerle)
                     if local_model is not None:
                         st.markdown("### 💡 Neden Analizi (SHAP)")
-                        df_input_shap = pd.DataFrame([customer_data])
-                        df_input_shap = pd.get_dummies(df_input_shap, drop_first=True)
-                        for col in expected_features:
-                            if col not in df_input_shap.columns: df_input_shap[col] = 0
-                        df_input_shap = df_input_shap[expected_features]
-                        scaled_input_shap = local_scaler.transform(df_input_shap)
+                        scaled_input_shap = preprocess_data(customer_data)
                         
                         explainer = shap.TreeExplainer(local_model)
                         shap_values = explainer.shap_values(scaled_input_shap, check_additivity=False)
