@@ -204,37 +204,59 @@ def main_dashboard():
         st.subheader("📁 Finansal Odaklı Toplu Analiz")
         uploaded_file = st.file_uploader("Dosya Seçin", type=["csv"])
         if uploaded_file is not None:
-            df = pd.read_csv(uploaded_file)
-            if st.button("🚀 Tüm Listeyi Analiz Et ve Önceliklendir", use_container_width=True):
-                progress_bar = st.progress(0)
-                results_list = []
-                total_rows = len(df)
-                for index, row in df.iterrows():
-                    cust_row = {
-                        "CreditScore": int(row["CreditScore"]), "Geography": str(row["Geography"]), "Gender": str(row["Gender"]),
-                        "Age": int(row["Age"]), "Tenure": int(row["Tenure"]), "Balance": float(row["Balance"]),
-                        "NumOfProducts": int(row["NumOfProducts"]), "HasCrCard": int(row["HasCrCard"]),
-                        "IsActiveMember": int(row["IsActiveMember"]), "EstimatedSalary": float(row["EstimatedSalary"])
-                    }
-                    # TOPLU ANALİZDE DE YEREL TAHMİN KULLANILIYOR
-                    res_batch = make_prediction(cust_row)
-                    churn_prob = res_batch["churn_ihtimali"]
-                    c_value = cust_row["Balance"] + (cust_row["EstimatedSalary"] * 0.20)
-                    exp_loss = c_value * churn_prob
-                    results_list.append({
-                        "Müşteri ID": row.get("CustomerId", index), "Risk (%)": round(churn_prob * 100, 2),
-                        "Risk Seviyesi": res_batch["risk_seviyesi"], "Müşteri Değeri (€)": round(c_value, 2),
-                        "Beklenen Kayıp (€)": round(exp_loss, 2)
-                    })
-                    progress_bar.progress((index + 1) / total_rows)
+            MAX_FILE_SIZE = 5 * 1024 * 1024 # 5 MB
+            if uploaded_file.size > MAX_FILE_SIZE:
+                st.error("❌ Yüklenen dosya boyutu çok büyük! Maksimum 5MB yükleyebilirsiniz.")
+            else:
+                try:
+                    df = pd.read_csv(uploaded_file)
 
-                results_df = pd.DataFrame(results_list).sort_values(by="Beklenen Kayıp (€)", ascending=False).reset_index(drop=True)
-                def color_risk(val): return f"color: {'red' if 'Yüksek' in str(val) else 'orange' if 'Orta' in str(val) else 'green'}"
-                styled_df = results_df.style.map(color_risk, subset=['Risk Seviyesi']).format({"Müşteri Değeri (€)": "{:,.2f}", "Beklenen Kayıp (€)": "{:,.2f}"})
-                st.success("✅ Analiz tamamlandı!")
-                st.dataframe(styled_df, use_container_width=True)
-                csv = results_df.to_csv(index=False).encode('utf-8')
-                st.download_button("📥 Analiz Raporunu İndir", data=csv, file_name='finansal_churn_raporu.csv', mime='text/csv')
+                    required_columns = [
+                        "CreditScore", "Geography", "Gender", "Age", "Tenure",
+                        "Balance", "NumOfProducts", "HasCrCard", "IsActiveMember",
+                        "EstimatedSalary"
+                    ]
+                    missing_columns = [col for col in required_columns if col not in df.columns]
+
+                    if missing_columns:
+                        st.error(f"❌ Yüklenen dosyada eksik sütunlar var: {', '.join(missing_columns)}")
+                    elif df.empty:
+                        st.error("❌ Yüklenen dosya boş.")
+                    elif len(df) > 10000:
+                        st.error("❌ Dosya çok fazla satır içeriyor. Lütfen en fazla 10.000 satırlık bir dosya yükleyin.")
+                    else:
+                        if st.button("🚀 Tüm Listeyi Analiz Et ve Önceliklendir", use_container_width=True):
+                            progress_bar = st.progress(0)
+                            results_list = []
+                            total_rows = len(df)
+                            for index, row in df.iterrows():
+                                cust_row = {
+                                    "CreditScore": int(row["CreditScore"]), "Geography": str(row["Geography"]), "Gender": str(row["Gender"]),
+                                    "Age": int(row["Age"]), "Tenure": int(row["Tenure"]), "Balance": float(row["Balance"]),
+                                    "NumOfProducts": int(row["NumOfProducts"]), "HasCrCard": int(row["HasCrCard"]),
+                                    "IsActiveMember": int(row["IsActiveMember"]), "EstimatedSalary": float(row["EstimatedSalary"])
+                                }
+                                # TOPLU ANALİZDE DE YEREL TAHMİN KULLANILIYOR
+                                res_batch = make_prediction(cust_row)
+                                churn_prob = res_batch["churn_ihtimali"]
+                                c_value = cust_row["Balance"] + (cust_row["EstimatedSalary"] * 0.20)
+                                exp_loss = c_value * churn_prob
+                                results_list.append({
+                                    "Müşteri ID": row.get("CustomerId", index), "Risk (%)": round(churn_prob * 100, 2),
+                                    "Risk Seviyesi": res_batch["risk_seviyesi"], "Müşteri Değeri (€)": round(c_value, 2),
+                                    "Beklenen Kayıp (€)": round(exp_loss, 2)
+                                })
+                                progress_bar.progress((index + 1) / total_rows)
+
+                            results_df = pd.DataFrame(results_list).sort_values(by="Beklenen Kayıp (€)", ascending=False).reset_index(drop=True)
+                            def color_risk(val): return f"color: {'red' if 'Yüksek' in str(val) else 'orange' if 'Orta' in str(val) else 'green'}"
+                            styled_df = results_df.style.map(color_risk, subset=['Risk Seviyesi']).format({"Müşteri Değeri (€)": "{:,.2f}", "Beklenen Kayıp (€)": "{:,.2f}"})
+                            st.success("✅ Analiz tamamlandı!")
+                            st.dataframe(styled_df, use_container_width=True)
+                            csv = results_df.to_csv(index=False).encode('utf-8')
+                            st.download_button("📥 Analiz Raporunu İndir", data=csv, file_name='finansal_churn_raporu.csv', mime='text/csv')
+                except Exception as e:
+                    st.error(f"❌ Dosya okunurken bir hata oluştu: {e}")
 
 # --- AKIŞ KONTROLÜ ---
 if not st.session_state.logged_in:
