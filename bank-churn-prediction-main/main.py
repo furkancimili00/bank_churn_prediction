@@ -51,7 +51,7 @@ def predict_churn(customer: CustomerData):
         raise HTTPException(status_code=500, detail="Makine öğrenmesi modeli yüklenemedi.")
 
     # Gelen veriyi bir sözlüğe (dictionary), sonra da Pandas DataFrame'e çeviriyoruz
-    customer_dict = customer.dict()
+    customer_dict = customer.model_dump()
     df_input = pd.DataFrame([customer_dict])
 
     # VERİ ÖN İŞLEME (Senin notebook'ta yaptığın işlemlerin simülasyonu)
