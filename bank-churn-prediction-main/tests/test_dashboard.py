@@ -13,7 +13,7 @@ mock_features = ['CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts',
                  'Geography_Germany', 'Geography_Spain', 'Gender_Male']
 
 # Modeli ve load_local_model'ı patch'liyoruz
-with patch('joblib.load') as mock_load:
+with patch('skops.io.load') as mock_load:
     mock_model = MagicMock()
     mock_model.predict_proba.return_value = np.array([[0.8, 0.2]])  # Düşük risk
 

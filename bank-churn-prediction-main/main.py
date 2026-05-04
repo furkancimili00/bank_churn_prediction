@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
-import joblib
+import skops.io as sio
 import os
 import pandas as pd
 
@@ -39,7 +39,7 @@ async def get_api_key(api_key: str = Depends(api_key_header_scheme)):
 # 2. Kaydettiğimiz modeli ve ön işleme araçlarını hafızaya yüklüyoruz.
 # (API her çalıştığında sadece bir kere yüklenir, her istekte tekrar yüklenmez - Performans için kritik)
 try:
-    model_pack = joblib.load('churn_thesis_model.pkl')
+    model_pack = sio.load('churn_thesis_model.skops')
     model = model_pack['model']
     scaler = model_pack['scaler']
     expected_features = model_pack['features']
