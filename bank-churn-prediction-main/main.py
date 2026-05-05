@@ -1,7 +1,10 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi import FastAPI, HTTPException, Depends, status, Request
 from fastapi.security import APIKeyHeader
 from pydantic import BaseModel
 import skops.io as sio
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 import os
 import pandas as pd
 from utils import preprocess_data
@@ -12,6 +15,11 @@ app = FastAPI(
     description="Müşterilerin bankayı terk etme (churn) riskini hesaplayan XAI destekli kurumsal API",
     version="1.0.0"
 )
+
+# Rate Limiter Kurulumu
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Güvenlik Ayarları
 API_KEY = os.getenv("CHURN_API_KEY")
@@ -72,7 +80,8 @@ def health_check():
 
 # 5. Endpoint: Asıl tahmini yapacak olan POST isteği
 @app.post("/predict", dependencies=[Depends(get_api_key)])
-def predict_churn(customer: CustomerData):
+@limiter.limit("10/minute")
+def predict_churn(request: Request, customer: CustomerData):
     if model is None:
         raise HTTPException(status_code=500, detail="Makine öğrenmesi modeli yüklenemedi.")
 

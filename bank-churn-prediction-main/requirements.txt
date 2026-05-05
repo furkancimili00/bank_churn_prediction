@@ -12,3 +12,6 @@ skops
 pytest
 pytest-cov
 httpx
+langgraph
+langchain_core
+slowapi
