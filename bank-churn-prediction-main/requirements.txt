@@ -9,3 +9,6 @@ shap
 plotly
 requests
 skops
+pytest
+pytest-cov
+httpx
