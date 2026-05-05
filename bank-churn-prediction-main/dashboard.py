@@ -4,6 +4,7 @@ import pandas as pd
 import skops.io as sio
 import shap
 import numpy as np
+from utils import preprocess_data
 
 # Sayfa ayarları her zaman en üstte olmalıdır
 st.set_page_config(page_title="Banka Churn Risk Paneli", page_icon="🏦", layout="wide")
@@ -45,13 +46,11 @@ def get_shap_explainer(_model):
 # TAHMİN FONKSİYONU (API YERİNE BURAYI KULLANACAĞIZ)
 def make_prediction(data_dict):
     df_input = pd.DataFrame([data_dict])
-    # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
-    df_input = pd.get_dummies(df_input, drop_first=True)
-    # Eksik sütunları (expected_features) 0 ile dolduruyoruz
-    df_input = df_input.reindex(columns=expected_features, fill_value=0)
     
-    # Scaling ve Tahmin
-    scaled_input = local_scaler.transform(df_input)
+    # Yeni Utils Fonksiyonu ile Ön İşleme
+    scaled_input = preprocess_data(df_input, expected_features, local_scaler)
+
+    # Tahmin
     prob = local_model.predict_proba(scaled_input)[0][1]
     pred = int(prob > 0.5)
     
@@ -65,13 +64,10 @@ def make_batch_prediction(df_input):
     """
     Toplu tahmin için optimize edilmiş tahmin fonksiyonu.
     """
-    # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
-    df_encoded = pd.get_dummies(df_input, drop_first=True)
-    # Eksik sütunları (expected_features) 0 ile dolduruyoruz
-    df_encoded = df_encoded.reindex(columns=expected_features, fill_value=0)
+    # Yeni Utils Fonksiyonu ile Ön İşleme
+    scaled_input = preprocess_data(df_input, expected_features, local_scaler)
 
-    # Scaling ve Tahmin
-    scaled_input = local_scaler.transform(df_encoded)
+    # Tahmin
     probs = local_model.predict_proba(scaled_input)[:, 1]
 
     return probs
@@ -160,9 +156,9 @@ def main_dashboard():
                     if local_model is not None:
                         st.markdown("### 💡 Neden Analizi (SHAP)")
                         df_input_shap = pd.DataFrame([customer_data])
-                        df_input_shap = pd.get_dummies(df_input_shap, drop_first=True)
-                        df_input_shap = df_input_shap.reindex(columns=expected_features, fill_value=0)
-                        scaled_input_shap = local_scaler.transform(df_input_shap)
+
+                        # Utils ile Ön İşleme
+                        scaled_input_shap = preprocess_data(df_input_shap, expected_features, local_scaler)
                         
                         explainer = get_shap_explainer(local_model)
                         shap_values = explainer.shap_values(scaled_input_shap, check_additivity=False)

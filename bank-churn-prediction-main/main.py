@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import skops.io as sio
 import os
 import pandas as pd
+from utils import preprocess_data
 
 # 1. FastAPI uygulamasını başlatıyoruz
 app = FastAPI(
@@ -79,16 +80,8 @@ def predict_churn(customer: CustomerData):
     customer_dict = customer.model_dump()
     df_input = pd.DataFrame([customer_dict])
 
-    # VERİ ÖN İŞLEME (Senin notebook'ta yaptığın işlemlerin simülasyonu)
-    # Kategori verilerini (Geography, Gender) One-Hot Encoding'e dönüştürme:
-    df_input = pd.get_dummies(df_input, drop_first=True)
-
-    # Modelin eğitiminde kullanılan sütun yapısı ile gelen verinin yapısını eşliyoruz.
-    # Eksik dummy sütunlar varsa 0 olarak ekliyoruz ve sıraya diziyoruz.
-    df_input = df_input.reindex(columns=expected_features, fill_value=0)
-
-    # Scaler ile sayısal verileri aynı eğitimdeki gibi ölçeklendiriyoruz
-    scaled_input = scaler.transform(df_input)
+    # VERİ ÖN İŞLEME
+    scaled_input = preprocess_data(df_input, expected_features, scaler)
 
     # TAHMİN (Prediction)
     # predict_proba ile sadece 0-1 değil, % kaç ihtimalle churn olacağını buluyoruz.
