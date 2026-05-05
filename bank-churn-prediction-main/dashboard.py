@@ -41,6 +41,8 @@ def get_shap_explainer(_model):
     SHAP model açıklayıcısını önbelleğe alır (caching).
     TreeExplainer hesaplaması maliyetli olduğundan her render işleminde baştan hesaplanmasını engeller.
     """
+    import asyncio
+    asyncio.set_event_loop(asyncio.new_event_loop())
     return shap.TreeExplainer(_model)
 
 # TAHMİN FONKSİYONU (API YERİNE BURAYI KULLANACAĞIZ)
