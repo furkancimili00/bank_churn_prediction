@@ -104,3 +104,37 @@ def test_predict_success_different_risk_levels(prob, expected_risk, mock_env, mo
     assert json_data["risk_seviyesi"] == expected_risk
     assert json_data["churn_ihtimali"] == prob
     assert "churn_tahmini" in json_data
+
+def test_predict_rate_limit(mock_env, monkeypatch):
+    """
+    /predict endpoint'ine art arda çok sayıda (10'dan fazla) istek atıldığında
+    rate limiting mekanizmasının devreye girip 429 döndürdüğünü test eder.
+    """
+    # Modeli ve scaler'ı mockluyoruz ki testler hızlı çalışsın
+    mock_model = MagicMock()
+    mock_model.predict_proba.return_value = [[0.8, 0.2]]
+    mock_model.predict.return_value = [0]
+
+    mock_scaler = MagicMock()
+    mock_scaler.transform.return_value = [[0] * 10]
+
+    monkeypatch.setattr(main, 'model', mock_model)
+    monkeypatch.setattr(main, 'scaler', mock_scaler)
+    monkeypatch.setattr(main, 'expected_features', ['CreditScore'])
+
+    headers = {"X-API-Key": VALID_API_KEY}
+
+    # Yeni bir client kullanalım (Rate limit remote_address'e baktığı için TestClient'te bazen IP sorunu olabilir ama varsayılan olarak testserver kullanır)
+    client_rl = TestClient(app)
+
+    # Önceki testlerden kalan limitleri sıfırlamak için limiter'ı temizliyoruz
+    app.state.limiter.reset()
+
+    # Rate limit 10/minute, o yüzden 10 tane başarılı istek atıyoruz
+    for _ in range(10):
+        response = client_rl.post("/predict", headers=headers, json=sample_customer_data)
+        assert response.status_code == 200
+
+    # 11. isteğin 429 Too Many Requests dönmesi gerekir
+    response = client_rl.post("/predict", headers=headers, json=sample_customer_data)
+    assert response.status_code == 429

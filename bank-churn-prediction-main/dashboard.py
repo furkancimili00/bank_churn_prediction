@@ -225,12 +225,19 @@ def main_dashboard():
                 try:
                     df = pd.read_csv(uploaded_file)
 
-                    required_columns = [
-                        "CreditScore", "Geography", "Gender", "Age", "Tenure",
-                        "Balance", "NumOfProducts", "HasCrCard", "IsActiveMember",
-                        "EstimatedSalary"
-                    ]
-                    missing_columns = [col for col in required_columns if col not in df.columns]
+                    required_columns = {
+                        "CreditScore": "int64",
+                        "Geography": "object",
+                        "Gender": "object",
+                        "Age": "int64",
+                        "Tenure": "int64",
+                        "Balance": "float64",
+                        "NumOfProducts": "int64",
+                        "HasCrCard": "int64",
+                        "IsActiveMember": "int64",
+                        "EstimatedSalary": "float64"
+                    }
+                    missing_columns = [col for col in required_columns.keys() if col not in df.columns]
 
                     if missing_columns:
                         st.error(f"❌ Yüklenen dosyada eksik sütunlar var: {', '.join(missing_columns)}")
@@ -239,11 +246,24 @@ def main_dashboard():
                     elif len(df) > 10000:
                         st.error("❌ Dosya çok fazla satır içeriyor. Lütfen en fazla 10.000 satırlık bir dosya yükleyin.")
                     else:
-                        if st.button("🚀 Tüm Listeyi Analiz Et ve Önceliklendir", use_container_width=True):
+                        # Tip zorlama ve doğrulama (Schema validation)
+                        try:
+                            # Sayısal olması gerekenleri sayısal tipe zorluyoruz
+                            numeric_cols = ["CreditScore", "Age", "Tenure", "Balance", "NumOfProducts", "HasCrCard", "IsActiveMember", "EstimatedSalary"]
+                            for col in numeric_cols:
+                                df[col] = pd.to_numeric(df[col], errors='raise')
+
+                            # Tür dönüşümü başarılı oldu, analiz adımına geçebiliriz
+                            schema_valid = True
+                        except ValueError as e:
+                            st.error(f"❌ Veri tipi hatası: Dosyadaki veriler beklenilen sayısal formatta değil. Detay: {e}")
+                            schema_valid = False
+
+                        if schema_valid and st.button("🚀 Tüm Listeyi Analiz Et ve Önceliklendir", use_container_width=True):
                             progress_bar = st.progress(0)
 
                             # Vektörel işlemlerle toplu tahmin ve hesaplamalar
-                            df_input = df[required_columns].copy()
+                            df_input = df[list(required_columns.keys())].copy()
 
                             probs = make_batch_prediction(df_input)
 
