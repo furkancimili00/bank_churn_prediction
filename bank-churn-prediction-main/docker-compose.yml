@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: churn_api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      - CHURN_API_KEY=${CHURN_API_KEY:-test_api_key}
+    restart: always
+
+  frontend:
+    build: .
+    container_name: churn_dashboard
+    command: streamlit run dashboard.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      - CHURN_API_KEY=${CHURN_API_KEY:-test_api_key}
+    depends_on:
+      - api
+    restart: always
