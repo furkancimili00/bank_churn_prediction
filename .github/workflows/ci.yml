@@ -37,3 +37,11 @@ jobs:
       run: |
         cd bank-churn-prediction-main
         python -m pytest --cov=. --cov-report=xml tests/
+
+    - name: Run QA Agent
+      env:
+        CHURN_API_KEY: 'test_api_key'
+      run: |
+        cd bank-churn-prediction-main
+        python qa_agent.py
+        cat ../QA_REPORT.md
