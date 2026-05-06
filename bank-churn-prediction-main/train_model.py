@@ -17,15 +17,6 @@ def load_data(filepath: str = 'Churn_Modelling.csv') -> pd.DataFrame:
 
 def train_and_optimize():
     """Modeli eğitir ve optimize eder."""
-    try:
-        df = load_data()
-    except FileNotFoundError:
-        print("Veriseti bulunamadı, lütfen 'Churn_Modelling.csv' dosyasını çalışma dizinine ekleyin.")
-        return
-
-    X = df.drop(columns=['RowNumber', 'CustomerId', 'Surname', 'Exited'])
-    y = df['Exited']
-
     # Mevcut modelden scaler ve özellikleri çekmek
     # Böylece production sistemleriyle tam uyum sağlanır
     untrusted = sio.get_untrusted_types(file='churn_thesis_model.skops')
@@ -33,9 +24,22 @@ def train_and_optimize():
         model_pack = sio.load('churn_thesis_model.skops', trusted=untrusted)
         scaler = model_pack['scaler']
         features = model_pack['features']
+
+        # Scaler'ı diske ayrıca kaydediyoruz
+        sio.dump(scaler, 'scaler.skops')
+        print("Scaler 'scaler.skops' olarak diske kaydedildi.")
     except Exception as e:
         print(f"Mevcut model yüklenemedi: {e}")
         return
+
+    try:
+        df = load_data()
+    except FileNotFoundError:
+        print("Veriseti bulunamadı, lütfen 'Churn_Modelling.csv' dosyasını çalışma dizinine ekleyin. Scaler mevcut modelden çıkartıldı.")
+        return
+
+    X = df.drop(columns=['RowNumber', 'CustomerId', 'Surname', 'Exited'])
+    y = df['Exited']
 
     # Veriyi ön işleme sokma
     X_preprocessed = preprocess_data(X, features, scaler)
@@ -77,6 +81,9 @@ def train_and_optimize():
         'scaler': scaler,
         'features': features
     }, 'churn_thesis_model.skops')
+
+    # Yeni eğitilen scaler'ı da diske kaydediyoruz
+    sio.dump(scaler, 'scaler.skops')
 
     print("\nModel başarıyla 'churn_thesis_model.skops' konumuna kaydedildi.")
 
