@@ -9,6 +9,8 @@ Bu dosya sistemin otonom AI ajanları ve geliştirici ekibi için bir yol harita
   - `main.py` içerisindeki `predict` endpoint'inde aşırı yüklemelere (DoS) karşı rate limiting altyapısı (örn: `slowapi`) kurulmalı.
 - [ ] **Streamlit Dosya Yükleme Güvenliği:**
   - `dashboard.py` üzerindeki toplu tahmin yükleme ekranında CSV dosyaları için katı doğrulama (şema, boyut ve satır limiti) kuralları uygulanmalı.
+- [ ] **Büyük Dil Modeli (LLM) ile Raporlama (RAG):**
+  - Üst yönetim için churn analizlerini özetleyecek ve aksiyon planı çıkaracak Retrieval-Augmented Generation (RAG) destekli bir raporlama modülü entegre edilmeli.
 
 ## 🟡 P2: Orta Öncelikli Görevler (Gelişmiş Analitik ve Optimizasyon)
 - [ ] **Gelişmiş CLTV (Customer Lifetime Value) İndikatörü:**
@@ -17,6 +19,8 @@ Bu dosya sistemin otonom AI ajanları ve geliştirici ekibi için bir yol harita
   - GridSearch yerine Optuna kütüphanesi kullanılarak daha verimli, bayesian-bazlı bir model optimizasyonu geliştirilmeli.
 - [ ] **SHAP ve Açıklanabilirlik Performansı (Caching):**
   - Streamlit dashboard'daki SHAP TreeExplainer hesaplamalarının performansı için `st.cache_resource` doğru ve asenkron uyarı bırakmayacak şekilde entegre edilmeli.
+- [ ] **Feature Store Entegrasyonu (Feast):**
+  - Makine öğrenimi özelliklerinin merkezi olarak yönetimi, versiyonlanması ve online/offline model servisleri arasında tutarlılığının sağlanması için Feast altyapısı kurulmalı.
 
 ## 🟢 P3: Düşük Öncelikli Görevler (Teknik Borç ve İzleme)
 - [ ] **Loglama Altyapısı (Logging):**
@@ -25,3 +29,5 @@ Bu dosya sistemin otonom AI ajanları ve geliştirici ekibi için bir yol harita
   - `tests/test_dashboard.py` için Streamlit AppTest senaryoları artırılmalı ve kapsam (coverage) %90'ın üzerine çekilmeli.
 - [ ] **Prometheus ve Grafana Entegrasyonu:**
   - FastAPI metriklerinin ve model tahmin dağılımlarının canlı olarak izlenebileceği bir dashboard oluşturulmalı.
+- [ ] **Gelişmiş Model İzleme (EvidentlyAI / Alibi Detect):**
+  - Üretim ortamında veri sapması (data drift) ve konsept sapması (concept drift) tespiti için gelişmiş model izleme kütüphaneleri entegre edilmeli.
