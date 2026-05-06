@@ -13,7 +13,7 @@ from utils import preprocess_data
 app = FastAPI(
     title="Banka Churn Tahmin API",
     description="Müşterilerin bankayı terk etme (churn) riskini hesaplayan XAI destekli kurumsal API",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Rate Limiter Kurulumu
@@ -25,6 +25,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 API_KEY = os.getenv("CHURN_API_KEY")
 API_KEY_NAME = "X-API-Key"
 api_key_header_scheme = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
 
 async def get_api_key(api_key: str = Depends(api_key_header_scheme)):
     """
@@ -45,13 +46,14 @@ async def get_api_key(api_key: str = Depends(api_key_header_scheme)):
         detail="Geçersiz veya eksik API Anahtarı",
     )
 
+
 # 2. Kaydettiğimiz modeli ve ön işleme araçlarını hafızaya yüklüyoruz.
 # (API her çalıştığında sadece bir kere yüklenir, her istekte tekrar yüklenmez - Performans için kritik)
 try:
-    model_pack = sio.load('churn_thesis_model.skops')
-    model = model_pack['model']
-    scaler = model_pack['scaler']
-    expected_features = model_pack['features']
+    model_pack = sio.load("churn_thesis_model.skops", trusted=True)
+    model = model_pack["model"]
+    scaler = model_pack["scaler"]
+    expected_features = model_pack["features"]
 except Exception as e:
     print(f"Model yüklenirken hata oluştu: {e}")
     model, scaler, expected_features = None, None, None
@@ -75,6 +77,9 @@ class CustomerData(BaseModel):
 # 4. Endpoint: Sadece sistemin çalışıp çalışmadığını test etmek için
 @app.get("/")
 def health_check():
+    """
+    API'nin çalışıp çalışmadığını kontrol eden sağlık (health-check) bitiş noktası.
+    """
     return {"status": "success", "message": "Churn Tahmin API aktif olarak çalışıyor."}
 
 
@@ -82,8 +87,20 @@ def health_check():
 @app.post("/predict", dependencies=[Depends(get_api_key)])
 @limiter.limit("10/minute")
 def predict_churn(request: Request, customer: CustomerData):
+    """
+    Müşteri verisini alarak churn (terk) tahminini hesaplayan ana bitiş noktası.
+
+    Args:
+        request (Request): Gelen HTTP isteği.
+        customer (CustomerData): Tahmin edilecek müşteri verisi.
+
+    Returns:
+        dict: Tahmin sonucu, olasılığı ve risk seviyesini içeren sözlük.
+    """
     if model is None:
-        raise HTTPException(status_code=500, detail="Makine öğrenmesi modeli yüklenemedi.")
+        raise HTTPException(
+            status_code=500, detail="Makine öğrenmesi modeli yüklenemedi."
+        )
 
     # Gelen veriyi bir sözlüğe (dictionary), sonra da Pandas DataFrame'e çeviriyoruz
     customer_dict = customer.model_dump()
@@ -110,5 +127,5 @@ def predict_churn(request: Request, customer: CustomerData):
         "churn_tahmini": churn_prediction,
         "churn_ihtimali": round(float(churn_probability), 4),
         "risk_seviyesi": risk_level,
-        "mesaj": "Tahmin başarıyla hesaplandı."
+        "mesaj": "Tahmin başarıyla hesaplandı.",
     }

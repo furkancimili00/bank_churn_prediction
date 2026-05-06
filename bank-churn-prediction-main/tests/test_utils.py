@@ -5,9 +5,10 @@ import numpy as np
 from unittest.mock import MagicMock
 
 # Proje ana dizinini Python yoluna ekle ki utils modülü içeri aktarılabilsin
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from utils import preprocess_data
+
 
 def test_preprocess_data():
     """
@@ -17,7 +18,9 @@ def test_preprocess_data():
     # Test verisi
     data = {
         "CreditScore": [600],
-        "Geography": pd.Categorical(["France"], categories=["France", "Germany", "Spain"]),
+        "Geography": pd.Categorical(
+            ["France"], categories=["France", "Germany", "Spain"]
+        ),
         "Gender": pd.Categorical(["Male"], categories=["Female", "Male"]),
         "Age": [40],
         "Tenure": [3],
@@ -25,15 +28,23 @@ def test_preprocess_data():
         "NumOfProducts": [2],
         "HasCrCard": [1],
         "IsActiveMember": [1],
-        "EstimatedSalary": [50000.0]
+        "EstimatedSalary": [50000.0],
     }
     df_input = pd.DataFrame(data)
 
     # Beklenen özellikler listesi
     expected_features = [
-        'CreditScore', 'Age', 'Tenure', 'Balance', 'NumOfProducts',
-        'HasCrCard', 'IsActiveMember', 'EstimatedSalary',
-        'Geography_Germany', 'Geography_Spain', 'Gender_Male'
+        "CreditScore",
+        "Age",
+        "Tenure",
+        "Balance",
+        "NumOfProducts",
+        "HasCrCard",
+        "IsActiveMember",
+        "EstimatedSalary",
+        "Geography_Germany",
+        "Geography_Spain",
+        "Gender_Male",
     ]
 
     # Dummy scaler
