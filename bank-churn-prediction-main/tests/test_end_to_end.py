@@ -1,10 +1,11 @@
+import numpy as np
 import sys
 import os
 from unittest.mock import patch, MagicMock
 import pytest
 
 # Üst dizindeki modülleri içe aktarabilmek için sys.path güncelleniyor
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from fastapi.testclient import TestClient
 from main import app
@@ -15,10 +16,12 @@ client = TestClient(app)
 
 VALID_API_KEY = "test_super_secret_key"
 
+
 @pytest.fixture
 def mock_env(monkeypatch):
-    monkeypatch.setattr(main, 'API_KEY', VALID_API_KEY)
+    monkeypatch.setattr(main, "API_KEY", VALID_API_KEY)
     yield
+
 
 # Örnek müşteri verisi
 sample_customer_data = {
@@ -31,8 +34,9 @@ sample_customer_data = {
     "NumOfProducts": 2,
     "HasCrCard": 1,
     "IsActiveMember": 1,
-    "EstimatedSalary": 50000.0
+    "EstimatedSalary": 50000.0,
 }
+
 
 def test_end_to_end_churn_prediction_and_agent(mock_env, monkeypatch):
     """
@@ -53,11 +57,11 @@ def test_end_to_end_churn_prediction_and_agent(mock_env, monkeypatch):
 
     # Scaler'ı mockluyoruz
     mock_scaler = MagicMock()
-    mock_scaler.transform.return_value = [[0] * 10]
+    mock_scaler.transform.return_value = np.array([[0] * 11])
 
-    monkeypatch.setattr(main, 'model', mock_model)
-    monkeypatch.setattr(main, 'scaler', mock_scaler)
-    monkeypatch.setattr(main, 'expected_features', ['CreditScore', 'Age'])
+    monkeypatch.setattr(main, "model", mock_model)
+    monkeypatch.setattr(main, "scaler", mock_scaler)
+    monkeypatch.setattr(main, "expected_features", ["CreditScore", "Age"])
 
     headers = {"X-API-Key": VALID_API_KEY}
 
@@ -75,14 +79,17 @@ def test_end_to_end_churn_prediction_and_agent(mock_env, monkeypatch):
     agent_result = run_agent(
         customer_id=customer_id,
         churn_probability=json_data["churn_ihtimali"],
-        risk_level=json_data["risk_seviyesi"]
+        risk_level=json_data["risk_seviyesi"],
     )
 
     # 4. Ajan yanıtını doğrula
     assert agent_result["customer_id"] == customer_id
     assert agent_result["churn_probability"] == prob
     assert agent_result["risk_level"] == expected_risk
-    assert agent_result["recommended_action"] == "Acil İletişim & %20 İndirim Maili Gönder"
+    assert (
+        agent_result["recommended_action"] == "Acil İletişim & %20 İndirim Maili Gönder"
+    )
+
 
 def test_end_to_end_loyal_customer_agent(mock_env, monkeypatch):
     """
@@ -98,11 +105,11 @@ def test_end_to_end_loyal_customer_agent(mock_env, monkeypatch):
 
     # Scaler'ı mockluyoruz
     mock_scaler = MagicMock()
-    mock_scaler.transform.return_value = [[0] * 10]
+    mock_scaler.transform.return_value = np.array([[0] * 11])
 
-    monkeypatch.setattr(main, 'model', mock_model)
-    monkeypatch.setattr(main, 'scaler', mock_scaler)
-    monkeypatch.setattr(main, 'expected_features', ['CreditScore', 'Age'])
+    monkeypatch.setattr(main, "model", mock_model)
+    monkeypatch.setattr(main, "scaler", mock_scaler)
+    monkeypatch.setattr(main, "expected_features", ["CreditScore", "Age"])
 
     headers = {"X-API-Key": VALID_API_KEY}
 
@@ -120,7 +127,7 @@ def test_end_to_end_loyal_customer_agent(mock_env, monkeypatch):
     agent_result = run_agent(
         customer_id=customer_id,
         churn_probability=json_data["churn_ihtimali"],
-        risk_level=json_data["risk_seviyesi"]
+        risk_level=json_data["risk_seviyesi"],
     )
 
     # 4. Ajan yanıtını doğrula

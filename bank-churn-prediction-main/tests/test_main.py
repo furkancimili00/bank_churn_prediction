@@ -1,10 +1,11 @@
+import numpy as np
 import sys
 import os
 from unittest.mock import patch, MagicMock
 import pytest
 
 # Üst dizindeki modülleri içe aktarabilmek için sys.path güncelleniyor
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from fastapi.testclient import TestClient
 from main import app
@@ -16,6 +17,7 @@ client = TestClient(app)
 # Bunu main modülüne monkeypatch ile uygulayacağız
 VALID_API_KEY = "test_super_secret_key"
 
+
 def test_health_check() -> None:
     """
     Health check (/) endpoint'inin doğru çalışıp çalışmadığını test eder.
@@ -26,12 +28,17 @@ def test_health_check() -> None:
     """
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"status": "success", "message": "Churn Tahmin API aktif olarak çalışıyor."}
+    assert response.json() == {
+        "status": "success",
+        "message": "Churn Tahmin API aktif olarak çalışıyor.",
+    }
+
 
 @pytest.fixture
 def mock_env(monkeypatch):
-    monkeypatch.setattr(main, 'API_KEY', VALID_API_KEY)
+    monkeypatch.setattr(main, "API_KEY", VALID_API_KEY)
     yield
+
 
 # Örnek müşteri verisi
 sample_customer_data = {
@@ -44,14 +51,19 @@ sample_customer_data = {
     "NumOfProducts": 2,
     "HasCrCard": 1,
     "IsActiveMember": 1,
-    "EstimatedSalary": 50000.0
+    "EstimatedSalary": 50000.0,
 }
+
 
 def test_predict_unauthorized_missing_key(mock_env):
     """API anahtarı gönderilmediğinde 401 Unauthorized dönmeli"""
     response = client.post("/predict", json=sample_customer_data)
     assert response.status_code == 401
-    assert "Geçersiz veya eksik API Anahtarı" in response.json()["detail"] or "Not authenticated" in response.json()["detail"]
+    assert (
+        "Geçersiz veya eksik API Anahtarı" in response.json()["detail"]
+        or "Not authenticated" in response.json()["detail"]
+    )
+
 
 def test_predict_unauthorized_invalid_key(mock_env):
     """Yanlış API anahtarı gönderildiğinde 401 Unauthorized dönmeli"""
@@ -60,28 +72,38 @@ def test_predict_unauthorized_invalid_key(mock_env):
     assert response.status_code == 401
     assert "Geçersiz veya eksik API Anahtarı" in response.json()["detail"]
 
+
 def test_predict_server_error_no_api_key_configured(monkeypatch):
     """Sunucuda API anahtarı yapılandırılmamışsa 500 Internal Server Error dönmeli"""
-    monkeypatch.setattr(main, 'API_KEY', None)
+    monkeypatch.setattr(main, "API_KEY", None)
     headers = {"X-API-Key": "some_key"}
     response = client.post("/predict", headers=headers, json=sample_customer_data)
     assert response.status_code == 500
-    assert "API anahtarı sunucu tarafında yapılandırılmamış" in response.json()["detail"]
+    assert (
+        "API anahtarı sunucu tarafında yapılandırılmamış" in response.json()["detail"]
+    )
+
 
 def test_predict_model_not_loaded(mock_env, monkeypatch):
     """Model yüklenememişse (None ise) 500 dönmeli"""
-    monkeypatch.setattr(main, 'model', None)
+    monkeypatch.setattr(main, "model", None)
     headers = {"X-API-Key": VALID_API_KEY}
     response = client.post("/predict", headers=headers, json=sample_customer_data)
     assert response.status_code == 500
     assert "Makine öğrenmesi modeli yüklenemedi" in response.json()["detail"]
 
-@pytest.mark.parametrize("prob, expected_risk", [
-    (0.80, "Çok Yüksek Riskli - Acil İletişime Geçilmeli"),
-    (0.50, "Orta Riskli - Kampanya Önerilebilir"),
-    (0.20, "Düşük Riskli - Sadık Müşteri")
-])
-def test_predict_success_different_risk_levels(prob, expected_risk, mock_env, monkeypatch):
+
+@pytest.mark.parametrize(
+    "prob, expected_risk",
+    [
+        (0.80, "Çok Yüksek Riskli - Acil İletişime Geçilmeli"),
+        (0.50, "Orta Riskli - Kampanya Önerilebilir"),
+        (0.20, "Düşük Riskli - Sadık Müşteri"),
+    ],
+)
+def test_predict_success_different_risk_levels(
+    prob, expected_risk, mock_env, monkeypatch
+):
     """Geçerli veri ile model tahmini yapıldığında risk seviyeleri doğru dönmeli"""
     # Modeli mockluyoruz
     mock_model = MagicMock()
@@ -90,11 +112,15 @@ def test_predict_success_different_risk_levels(prob, expected_risk, mock_env, mo
 
     # Scaler'ı mockluyoruz
     mock_scaler = MagicMock()
-    mock_scaler.transform.return_value = [[0] * 10] # Dummy dönüştürülmüş veri
+    mock_scaler.transform.return_value = np.array(
+        [[0] * 11]
+    )  # Dummy dönüştürülmüş veri
 
-    monkeypatch.setattr(main, 'model', mock_model)
-    monkeypatch.setattr(main, 'scaler', mock_scaler)
-    monkeypatch.setattr(main, 'expected_features', ['CreditScore', 'Age']) # Dummy features
+    monkeypatch.setattr(main, "model", mock_model)
+    monkeypatch.setattr(main, "scaler", mock_scaler)
+    monkeypatch.setattr(
+        main, "expected_features", ["CreditScore", "Age"]
+    )  # Dummy features
 
     headers = {"X-API-Key": VALID_API_KEY}
     response = client.post("/predict", headers=headers, json=sample_customer_data)
@@ -104,6 +130,7 @@ def test_predict_success_different_risk_levels(prob, expected_risk, mock_env, mo
     assert json_data["risk_seviyesi"] == expected_risk
     assert json_data["churn_ihtimali"] == prob
     assert "churn_tahmini" in json_data
+
 
 def test_predict_rate_limit(mock_env, monkeypatch):
     """
@@ -116,11 +143,11 @@ def test_predict_rate_limit(mock_env, monkeypatch):
     mock_model.predict.return_value = [0]
 
     mock_scaler = MagicMock()
-    mock_scaler.transform.return_value = [[0] * 10]
+    mock_scaler.transform.return_value = np.array([[0] * 11])
 
-    monkeypatch.setattr(main, 'model', mock_model)
-    monkeypatch.setattr(main, 'scaler', mock_scaler)
-    monkeypatch.setattr(main, 'expected_features', ['CreditScore'])
+    monkeypatch.setattr(main, "model", mock_model)
+    monkeypatch.setattr(main, "scaler", mock_scaler)
+    monkeypatch.setattr(main, "expected_features", ["CreditScore"])
 
     headers = {"X-API-Key": VALID_API_KEY}
 
@@ -132,7 +159,9 @@ def test_predict_rate_limit(mock_env, monkeypatch):
 
     # Rate limit 10/minute, o yüzden 10 tane başarılı istek atıyoruz
     for _ in range(10):
-        response = client_rl.post("/predict", headers=headers, json=sample_customer_data)
+        response = client_rl.post(
+            "/predict", headers=headers, json=sample_customer_data
+        )
         assert response.status_code == 200
 
     # 11. isteğin 429 Too Many Requests dönmesi gerekir
