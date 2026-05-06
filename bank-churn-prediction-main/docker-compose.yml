@@ -10,6 +10,12 @@ services:
     environment:
       - CHURN_API_KEY=${CHURN_API_KEY:-test_api_key}
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   frontend:
     build: .
@@ -19,6 +25,14 @@ services:
       - "8501:8501"
     environment:
       - CHURN_API_KEY=${CHURN_API_KEY:-test_api_key}
+      - API_URL=http://api:8000
     depends_on:
-      - api
+      api:
+        condition: service_healthy
     restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
