@@ -5,7 +5,7 @@ services:
     rootDir: bank-churn-prediction-main
     region: frankfurt
     plan: free
-    dockerCommand: bash -c "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    dockerCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: CHURN_API_KEY
         generateValue: true
@@ -16,10 +16,15 @@ services:
     rootDir: bank-churn-prediction-main
     region: frankfurt
     plan: free
-    dockerCommand: bash -c "streamlit run dashboard.py --server.port=$PORT --server.address=0.0.0.0"
+    dockerCommand: streamlit run dashboard.py --server.port=$PORT --server.address=0.0.0.0
     envVars:
       - key: CHURN_API_KEY
         fromService:
           type: web
           name: churn-api
           envVarKey: CHURN_API_KEY
+      - key: API_URL
+        fromService:
+          type: web
+          name: churn-api
+          envVarKey: RENDER_EXTERNAL_URL
