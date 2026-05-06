@@ -14,6 +14,12 @@ def preprocess_data(df_input: pd.DataFrame, expected_features: list, scaler) -> 
     Returns:
         İşlenmiş ve ölçeklendirilmiş veri
     """
+    if scaler is None:
+        raise ValueError("Scaler objesi None olamaz. Lütfen 'scaler.skops' dosyasının doğru yüklendiğinden emin olun.")
+
+    if not expected_features:
+        raise ValueError("Beklenen özellikler (expected_features) boş veya None olamaz.")
+
     # Kategorik verileri sayısal formata çeviriyoruz (One-Hot Encoding)
     df_encoded = pd.get_dummies(df_input, drop_first=True)
 
