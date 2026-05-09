@@ -19,7 +19,7 @@ from sklearn.metrics import (
     precision_score,
     recall_score,
 )
-from typing import Optional
+from typing import Optional, Any, List, Dict
 from core.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -34,8 +34,8 @@ THESIS_TARGETS = {
 
 
 def compute_all_metrics(
-    model, scaler, features: list, df: pd.DataFrame
-) -> Optional[dict]:
+    model: Any, scaler: Any, features: List[str], df: pd.DataFrame
+) -> Optional[Dict[str, Any]]:
     """
     Model üzerinde tüm performans metriklerini hesaplar.
 

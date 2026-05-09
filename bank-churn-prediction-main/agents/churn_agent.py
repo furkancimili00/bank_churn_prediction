@@ -104,6 +104,10 @@ def generate_campaign(state: CustomerState) -> CustomerState:
 
     state["campaign_message"] = default_msg
 
+    if not c_data:
+        logger.debug("Müşteri profili olmadığı için LLM kampanya üretimi atlandı.")
+        return state
+
     # LLM (Yapay Zeka) Destekli Çapraz Kampanya (Cross-Campaign) Üretimi
     try:
         import streamlit as st

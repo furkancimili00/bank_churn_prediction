@@ -1,93 +1,99 @@
-import pandas as pd
+"""Streamlit ve testler icin geriye uyumlu tahmin yardimcilari."""
+
+from typing import Any, Optional
+
 import numpy as np
+import pandas as pd
 import shap
-import skops.io as sio
-import streamlit as st
-from core.utils import preprocess_data
+
+from core.config import get_settings
+from core.logging_config import get_logger
+from services.model_loader import load_model_artifacts
+from services.prediction_service import PredictionService
+
+logger = get_logger(__name__)
+
+_MODEL_CACHE: Optional[tuple[Any, Any, list[str]]] = None
+_EXPLAINER_CACHE: dict[int, Any] = {}
 
 
-@st.cache_resource
-def load_local_model():
-    """
-    Diskteki model, scaler ve beklenen özellikleri yükler.
+def load_local_model() -> tuple[Any, Any, Optional[list[str]]]:
+    """Yerel model, scaler ve beklenen ozellikleri yukler.
 
     Returns:
-        tuple: (model, scaler, expected_features)
+        tuple[Any, Any, Optional[list[str]]]: Model, scaler ve ozellik listesi.
     """
+    global _MODEL_CACHE
+
+    if _MODEL_CACHE is not None:
+        return _MODEL_CACHE
+
     try:
-        untrusted = sio.get_untrusted_types(file="churn_thesis_model.skops")
-        pack = sio.load("churn_thesis_model.skops", trusted=untrusted)
-        return pack["model"], pack["scaler"], pack["features"]
-    except Exception as e:
-        st.error(f"Model dosyası yüklenemedi: {e}")
+        artifacts = load_model_artifacts(get_settings().model_path)
+        _MODEL_CACHE = (
+            artifacts.model,
+            artifacts.scaler,
+            artifacts.expected_features,
+        )
+        return _MODEL_CACHE
+    except Exception as exc:
+        logger.error(f"Model dosyasi yuklenemedi: {exc}")
         return None, None, None
 
 
-@st.cache_resource
-def get_shap_explainer(_model):
-    """
-    SHAP model açıklayıcısını önbelleğe alır (caching).
-    TreeExplainer hesaplaması maliyetli olduğundan her render işleminde baştan hesaplanmasını engeller.
+def get_shap_explainer(_model: Any) -> Any:
+    """SHAP aciklayicisini model kimligine gore onbellekten dondurur.
 
     Args:
-        _model: Açıklanacak XGBoost/Tree tabanlı model.
+        _model: Aciklanacak agac tabanli model.
 
     Returns:
-        shap.TreeExplainer: Model açıklayıcısı
+        Any: SHAP TreeExplainer nesnesi.
     """
-    return shap.TreeExplainer(_model)
+    cache_key = id(_model)
+    if cache_key not in _EXPLAINER_CACHE:
+        _EXPLAINER_CACHE[cache_key] = shap.TreeExplainer(_model)
+
+    return _EXPLAINER_CACHE[cache_key]
 
 
 def make_prediction(
-    data_dict: dict, local_model, local_scaler, expected_features
-) -> dict:
-    """
-    Gelen sözlük (dict) formatındaki veriden tekil bir tahmin (prediction) üretir.
+    data_dict: dict[str, Any],
+    local_model: Any,
+    local_scaler: Any,
+    expected_features: list[str],
+) -> dict[str, Any]:
+    """Sozluk formatindaki musteri verisinden tekil tahmin uretir.
 
     Args:
-        data_dict (dict): Müşteri özellikleri.
-        local_model: Yüklü model objesi.
-        local_scaler: Yüklü ölçeklendirme objesi.
-        expected_features: Beklenen sütun adları listesi.
+        data_dict: Musteri ozellikleri.
+        local_model: Yuklu model nesnesi.
+        local_scaler: Yuklu olceklendirici nesne.
+        expected_features: Modelin bekledigi ozellik listesi.
 
     Returns:
-        dict: churn tahmini (0 veya 1), churn ihtimali (float) ve risk seviyesini içeren sözlük.
+        dict[str, Any]: Tahmin, olasilik ve risk seviyesi.
     """
-    df_input = pd.DataFrame([data_dict])
-
-    # Yeni Utils Fonksiyonu ile Ön İşleme
-    scaled_input = preprocess_data(df_input, expected_features, local_scaler)
-
-    # Tahmin
-    prob = local_model.predict_proba(scaled_input)[0][1]
-    pred = int(prob > 0.5)
-
-    return {
-        "churn_tahmini": pred,
-        "churn_ihtimali": float(prob),
-        "risk_seviyesi": "Yüksek" if prob > 0.7 else "Orta" if prob > 0.4 else "Düşük",
-    }
+    service = PredictionService(local_model, local_scaler, expected_features)
+    return service.predict_one(data_dict)
 
 
 def make_batch_prediction(
-    df_input: pd.DataFrame, local_model, local_scaler, expected_features
+    df_input: pd.DataFrame,
+    local_model: Any,
+    local_scaler: Any,
+    expected_features: list[str],
 ) -> np.ndarray:
-    """
-    Toplu tahmin için optimize edilmiş tahmin fonksiyonu.
+    """Toplu tahmin icin churn olasiliklarini vektorel olarak uretir.
 
     Args:
-        df_input (pd.DataFrame): Tahmin edilecek müşteri verilerini içeren DataFrame.
-        local_model: Yüklü model objesi.
-        local_scaler: Yüklü ölçeklendirme objesi.
-        expected_features: Beklenen sütun adları listesi.
+        df_input: Tahmin edilecek musteri verileri.
+        local_model: Yuklu model nesnesi.
+        local_scaler: Yuklu olceklendirici nesne.
+        expected_features: Modelin bekledigi ozellik listesi.
 
     Returns:
-        np.ndarray: Tahmin olasılıklarını içeren dizi.
+        np.ndarray: Churn olasiliklari.
     """
-    # Yeni Utils Fonksiyonu ile Ön İşleme
-    scaled_input = preprocess_data(df_input, expected_features, local_scaler)
-
-    # Tahmin
-    probs = local_model.predict_proba(scaled_input)[:, 1]
-
-    return probs
+    service = PredictionService(local_model, local_scaler, expected_features)
+    return service.predict_probabilities(df_input)

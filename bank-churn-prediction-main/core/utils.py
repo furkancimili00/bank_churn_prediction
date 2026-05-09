@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
+from typing import Any, List
 
 
 def preprocess_data(
-    df_input: pd.DataFrame, expected_features: list, scaler
+    df_input: pd.DataFrame, expected_features: List[str], scaler: Any
 ) -> np.ndarray:
     """
     Verilen DataFrame'i modelin beklediği formata getirir.

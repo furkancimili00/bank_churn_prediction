@@ -33,6 +33,7 @@ desktop.ini
 
 # ===== Pytest / Test =====
 .pytest_cache/
+.pytest-tmp/
 htmlcov/
 .coverage
 coverage.xml

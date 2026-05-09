@@ -1,0 +1,64 @@
+import streamlit as st
+from services.eda_service import load_default_dataset
+from services.segmentation_service import (
+    create_pca_scatter,
+    create_segment_churn_bar,
+    create_segment_profile,
+    create_segment_summary_table,
+    find_optimal_k,
+    perform_segmentation,
+)
+
+def render_tab_segmentation(local_model=None, local_scaler=None, expected_features=None):
+        st.subheader("🎯 Müşteri Segmentasyonu (K-Means Kümeleme)")
+        st.write(
+            "Müşterilerinizi davranış ve demografik özelliklerine göre otomatik segmentlere ayırın. "
+            "Her segmentin risk profilini ve özelliklerini keşfedin."
+        )
+    
+        seg_df = load_default_dataset()
+        if seg_df is not None:
+            # Elbow Method
+            with st.expander("📀 Optimum Küme Sayısı Seçimi (Elbow Method)", expanded=False):
+                fig_elbow = find_optimal_k(seg_df)
+                st.plotly_chart(fig_elbow, use_container_width=True)
+                st.caption("Grafiğin dirsek (elbow) noktası, optimum küme sayısını gösterir.")
+    
+            n_clusters = st.slider(
+                "Küme Sayısını Seçin (k):", min_value=2, max_value=6, value=3, key="seg_k"
+            )
+    
+            if st.button("🚀 Segmentasyonu Başlat", use_container_width=True, type="primary"):
+                with st.spinner("Kümeleme analizi yapılıyor..."):
+                    df_seg, X_scaled, _ = perform_segmentation(seg_df, n_clusters)
+    
+                    # Özet Tablosu
+                    st.markdown("### 📋 Segment Özet Tablosu")
+                    fig_summary = create_segment_summary_table(df_seg)
+                    st.plotly_chart(fig_summary, use_container_width=True)
+    
+                    st.write("---")
+                    seg_col1, seg_col2 = st.columns(2)
+    
+                    # PCA Scatter
+                    with seg_col1:
+                        st.markdown("### 📊 PCA Kümeleme Görselleştirmesi")
+                        fig_pca = create_pca_scatter(df_seg, X_scaled)
+                        st.plotly_chart(fig_pca, use_container_width=True)
+    
+                    # Segment Churn Oranları
+                    with seg_col2:
+                        fig_churn_bar = create_segment_churn_bar(df_seg)
+                        if fig_churn_bar is not None:
+                            st.markdown("### 📊 Segment Bazında Churn Oranı")
+                            st.plotly_chart(fig_churn_bar, use_container_width=True)
+    
+                    st.write("---")
+                    # Radar Profil
+                    st.markdown("### 🕸️ Segment Profilleri (Radar)")
+                    fig_radar = create_segment_profile(df_seg)
+                    st.plotly_chart(fig_radar, use_container_width=True)
+        else:
+            st.warning("⚠️ Varsayılan veri seti bulunamadı.")
+    
+    # --- SEKME 8: ADİLLİK VE ÖNYARGI (FAIRNESS) ---
