@@ -65,7 +65,7 @@ def create_profile_card_fig(customer_data: dict, risk_pct: float, risk_level: st
         cells=dict(
             values=[labels, values],
             fill_color=[["#ecf0f1"] * len(labels), ["white"] * len(labels)],
-            font=dict(size=12), align=["left", "center"], height=30,
+            font=dict(color="black", size=12), align=["left", "center"], height=30,
         ),
     )])
     fig.update_layout(

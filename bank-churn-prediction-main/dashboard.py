@@ -245,13 +245,14 @@ def main_dashboard():
             }
 
             with st.spinner("Yapay Zeka Hesaplarken Lütfen Bekleyin..."):
-                # ARTIK API İSTEĞİ ATMIYORUZ, TAHMİNİ BURADA YAPIYORUZ
                 result = make_prediction(
                     customer_data, local_model, local_scaler, expected_features
                 )
                 churn_probability = result["churn_ihtimali"] * 100
                 st.session_state.current_customer = customer_data
                 st.session_state.base_risk = churn_probability
+                st.session_state.prediction_result = result
+                st.session_state.analyze_clicked = True
 
                 # Risk geçmişine ekle
                 from datetime import datetime
@@ -261,128 +262,164 @@ def main_dashboard():
                     "label": f"Kredi:{credit_score} Yaş:{age} Bakiye:€{balance:,.0f}",
                 })
 
-                customer_value = balance + (est_salary * 0.20)
-                expected_loss = customer_value * (churn_probability / 100)
+        if st.session_state.get("analyze_clicked", False):
+            customer_data = st.session_state.current_customer
+            churn_probability = st.session_state.base_risk
+            result = st.session_state.prediction_result
+            
+            customer_value = customer_data["Balance"] + (customer_data["EstimatedSalary"] * 0.20)
+            expected_loss = customer_value * (churn_probability / 100)
 
-                st.write("---")
-                st.subheader("💰 Finansal Etki Analizi (CLTV)")
-                fin_col1, fin_col2, fin_col3 = st.columns(3)
-                fin_col1.metric(
-                    label="Müşterinin Bankaya Değeri", value=f"€{customer_value:,.2f}"
-                )
-                fin_col2.metric(
-                    label="Ayrılma İhtimali", value=f"%{churn_probability:.1f}"
-                )
-                fin_col3.metric(
-                    label="Beklenen Finansal Kayıp",
-                    value=f"€{expected_loss:,.2f}",
-                    delta="- Risk Tutarı",
-                    delta_color="inverse",
-                )
+            st.write("---")
+            st.subheader("💰 Finansal Etki Analizi (CLTV)")
+            fin_col1, fin_col2, fin_col3 = st.columns(3)
+            fin_col1.metric(
+                label="Müşterinin Bankaya Değeri", value=f"€{customer_value:,.2f}"
+            )
+            fin_col2.metric(
+                label="Ayrılma İhtimali", value=f"%{churn_probability:.1f}"
+            )
+            fin_col3.metric(
+                label="Beklenen Finansal Kayıp",
+                value=f"€{expected_loss:,.2f}",
+                delta="- Risk Tutarı",
+                delta_color="inverse",
+            )
 
-                st.write("---")
-                res_col1, res_col2 = st.columns([1, 1])
-                with res_col1:
-                    st.subheader("📊 Model Çıktısı")
-                    st.metric(label="Risk Kategorisi", value=result["risk_seviyesi"])
+            st.write("---")
+            res_col1, res_col2 = st.columns([1, 1])
+            with res_col1:
+                st.subheader("📊 Model Çıktısı")
+                st.metric(label="Risk Kategorisi", value=result["risk_seviyesi"])
 
-                    # SHAP ANALİZİ (Önceden yaptığımız düzeltmelerle)
-                    if local_model is not None:
-                        st.markdown("### 💡 Neden Analizi (SHAP)")
-                        try:
-                            df_input_shap = pd.DataFrame([customer_data])
+                # SHAP ANALİZİ (Önceden yaptığımız düzeltmelerle)
+                if local_model is not None:
+                    st.markdown("### 💡 Neden Analizi (SHAP)")
+                    try:
+                        df_input_shap = pd.DataFrame([customer_data])
 
-                            # Utils ile Ön İşleme
-                            scaled_input_shap = preprocess_data(
-                                df_input_shap, expected_features, local_scaler
-                            )
-
-                            explainer = get_shap_explainer(local_model)
-                            shap_values = explainer.shap_values(
-                                scaled_input_shap, check_additivity=False
-                            )
-
-                            if isinstance(shap_values, list):
-                                shap_vals = shap_values[1][0]
-                            else:
-                                shap_vals = (
-                                    shap_values[0, :, 1]
-                                    if len(shap_values.shape) == 3
-                                    else shap_values[0]
-                                )
-
-                            shap_vals = np.array(shap_vals).flatten()
-                            sort_inds = np.argsort(np.abs(shap_vals))
-                            sorted_features = np.array(expected_features)[sort_inds]
-                            sorted_shap = shap_vals[sort_inds]
-                            colors = [
-                                "salmon" if float(val) > 0 else "lightgreen"
-                                for val in sorted_shap
-                            ]
-
-                            fig_shap = go.Figure(
-                                go.Bar(
-                                    x=sorted_shap,
-                                    y=sorted_features,
-                                    orientation="h",
-                                    marker_color=colors,
-                                )
-                            )
-                            fig_shap.update_layout(
-                                xaxis_title="<- Riski Düşürenler | Riski Artıranlar ->",
-                                margin=dict(l=0, r=0, t=0, b=0),
-                                height=300,
-                            )
-                            st.plotly_chart(fig_shap, use_container_width=True)
-                        except Exception as e:
-                            import traceback
-                            st.warning("Görsel açıklama modeli (SHAP) hesaplanırken bir hata oluştu.")
-                            st.error(f"Hata Detayı: {traceback.format_exc()}")
-
-                with res_col2:
-                    fig_gauge = go.Figure(
-                        go.Indicator(
-                            mode="gauge+number",
-                            value=churn_probability,
-                            title={
-                                "text": "Ayrılma İhtimali (%)",
-                                "font": {"size": 24},
-                            },
-                            gauge={
-                                "axis": {"range": [None, 100]},
-                                "bar": {"color": "black"},
-                                "steps": [
-                                    {"range": [0, 40], "color": "lightgreen"},
-                                    {"range": [40, 70], "color": "gold"},
-                                    {"range": [70, 100], "color": "salmon"},
-                                ],
-                            },
+                        # Utils ile Ön İşleme
+                        scaled_input_shap = preprocess_data(
+                            df_input_shap, expected_features, local_scaler
                         )
-                    )
-                    st.plotly_chart(fig_gauge, use_container_width=True)
 
-                if churn_probability > 50:
-                    st.warning(
-                        "⚠️ Müşterinin ayrılma riski yüksek. Acil aksiyon alınması önerilir."
-                    )
-                    if st.button(
-                        "🤖 AI Kurtarma Kampanyası Üret", use_container_width=True
-                    ):
-                        with st.spinner("AI Kampanya Önerisi Hazırlanıyor..."):
-                            agent_result = run_agent(
-                                customer_id="CUST-1",
-                                churn_probability=churn_probability / 100,
-                                risk_level=result["risk_seviyesi"],
+                        explainer = get_shap_explainer(local_model)
+                        shap_values = explainer.shap_values(
+                            scaled_input_shap, check_additivity=False
+                        )
+
+                        if isinstance(shap_values, list):
+                            shap_vals = shap_values[1][0]
+                        else:
+                            shap_vals = (
+                                shap_values[0, :, 1]
+                                if len(shap_values.shape) == 3
+                                else shap_values[0]
                             )
-                            st.success("✨ Kampanya Önerisi Hazır!")
-                            with st.expander("📋 Kampanya Detayları (4 Adımlı Ajan Çıktısı)", expanded=True):
-                                ag_c1, ag_c2 = st.columns(2)
-                                ag_c1.metric("🎯 Kampanya Türü", agent_result.get('campaign_type', '—'))
-                                ag_c2.metric("💰 Tahmini Bütçe", f"€{agent_result.get('estimated_budget', 0):,.0f}")
-                                st.info(f"**Önerilen Aksiyon:** {agent_result.get('recommended_action')}")
-                                st.success(f"📢 **İletişim Kanalı:** {agent_result.get('contact_channel', '—')}")
-                                st.markdown(f"> 📧 **Kampanya Mesajı:** {agent_result.get('campaign_message', '')}")
-                                st.caption(f"Aciliyet: {agent_result.get('urgency', '—').upper()}")
+
+                        shap_vals = np.array(shap_vals).flatten()
+                        sort_inds = np.argsort(np.abs(shap_vals))
+                        sorted_features = np.array(expected_features)[sort_inds]
+                        sorted_shap = shap_vals[sort_inds]
+                        colors = [
+                            "salmon" if float(val) > 0 else "lightgreen"
+                            for val in sorted_shap
+                        ]
+
+                        fig_shap = go.Figure(
+                            go.Bar(
+                                x=sorted_shap,
+                                y=sorted_features,
+                                orientation="h",
+                                marker_color=colors,
+                            )
+                        )
+                        fig_shap.update_layout(
+                            xaxis_title="<- Riski Düşürenler | Riski Artıranlar ->",
+                            margin=dict(l=0, r=0, t=0, b=0),
+                            height=300,
+                        )
+                        st.plotly_chart(fig_shap, use_container_width=True)
+                    except Exception as e:
+                        import traceback
+                        st.warning("Görsel açıklama modeli (SHAP) hesaplanırken bir hata oluştu.")
+                        st.error(f"Hata Detayı: {traceback.format_exc()}")
+
+            with res_col2:
+                fig_gauge = go.Figure(
+                    go.Indicator(
+                        mode="gauge+number",
+                        value=churn_probability,
+                        title={
+                            "text": "Ayrılma İhtimali (%)",
+                            "font": {"size": 24},
+                        },
+                        gauge={
+                            "axis": {"range": [None, 100]},
+                            "bar": {"color": "black"},
+                            "steps": [
+                                {"range": [0, 40], "color": "lightgreen"},
+                                {"range": [40, 70], "color": "gold"},
+                                {"range": [70, 100], "color": "salmon"},
+                            ],
+                        },
+                    )
+                )
+                st.plotly_chart(fig_gauge, use_container_width=True)
+
+            if churn_probability > 50:
+                st.warning(
+                    "⚠️ Müşterinin ayrılma riski yüksek. Acil aksiyon alınması önerilir."
+                )
+                if st.button(
+                    "🤖 AI Kurtarma Kampanyası Üret", use_container_width=True
+                ):
+                    with st.spinner("AI Kampanya Önerisi Hazırlanıyor..."):
+                        agent_result = run_agent(
+                            customer_id="CUST-1",
+                            churn_probability=churn_probability / 100,
+                            risk_level=result["risk_seviyesi"],
+                            customer_data=customer_data,
+                        )
+                        st.success("✨ Kampanya Önerisi Hazır!")
+                        with st.expander("📋 Kampanya Detayları (Ajan Çıktısı)", expanded=True):
+                            ag_c1, ag_c2, ag_c3 = st.columns(3)
+                            ag_c1.metric("🎯 Kampanya Türü", agent_result.get('campaign_type', '—'))
+                            ag_c2.metric("💰 Tahmini Bütçe", f"€{agent_result.get('estimated_budget', 0):,.0f}")
+                            ag_c3.metric("📢 İletişim", agent_result.get('contact_channel', '—').split()[1] if len(agent_result.get('contact_channel', '—').split())>1 else "Bildirim")
+                            
+                            st.info(f"**Önerilen Sistem Aksiyonu:** {agent_result.get('recommended_action')}")
+                            
+                            gemini_msg = agent_result.get('gemini_campaign')
+                            groq_msg = agent_result.get('groq_campaign')
+                            openai_msg = agent_result.get('openai_campaign')
+                            
+                            if gemini_msg or groq_msg or openai_msg:
+                                st.markdown("### 🤖 Yapay Zeka Kampanya Önerileri Karşılaştırması")
+                                ai_cols = st.columns(2)
+                                
+                                # Gemini Column
+                                with ai_cols[0]:
+                                    st.markdown("#### 🔵 Google Gemini")
+                                    if gemini_msg:
+                                        st.success(gemini_msg)
+                                    else:
+                                        st.warning("Gemini API aktif değil veya yanıt vermedi.")
+                                        
+                                # Groq Column
+                                with ai_cols[1]:
+                                    st.markdown("#### 🟠 Groq (Llama3)")
+                                    if groq_msg:
+                                        st.info(groq_msg)
+                                    elif openai_msg:
+                                        st.markdown("#### 🟢 OpenAI")
+                                        st.info(openai_msg)
+                                    else:
+                                        st.warning("Groq/OpenAI API aktif değil veya yanıt vermedi.")
+                            else:
+                                st.markdown(f"> 📧 **Kural Tabanlı Kampanya Mesajı:** {agent_result.get('campaign_message', '')}")
+                            
+                            st.caption(f"Aciliyet: {agent_result.get('urgency', '—').upper()}")
 
     # --- SEKM 2: WHAT-IF SİMÜLATÖRÜ ---
     with tab2:

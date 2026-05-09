@@ -286,7 +286,7 @@ def create_bias_summary_table(di_results: list[dict]) -> go.Figure:
         cells=dict(
             values=cell_vals,
             fill_color=[["#ecf0f1"] * len(rows)],
-            font=dict(size=11), align="center", height=30,
+            font=dict(color="black", size=11), align="center", height=30,
         ),
     )])
     fig.update_layout(

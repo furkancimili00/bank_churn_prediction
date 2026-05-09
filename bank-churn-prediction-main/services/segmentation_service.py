@@ -217,7 +217,7 @@ def create_segment_summary_table(df_segmented: pd.DataFrame) -> go.Figure:
         cells=dict(
             values=cell_vals,
             fill_color=[["#ecf0f1"] * len(summary_rows)],
-            font=dict(size=11), align="center", height=28,
+            font=dict(color="black", size=11), align="center", height=28,
         ),
     )])
     fig.update_layout(

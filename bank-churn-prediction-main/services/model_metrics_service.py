@@ -252,7 +252,7 @@ def create_metrics_comparison_table(metrics: dict) -> go.Figure:
         cells=dict(
             values=cell_vals,
             fill_color=[["#ecf0f1"] * len(rows)],
-            font=dict(size=12), align="center", height=30,
+            font=dict(color="black", size=12), align="center", height=30,
         ),
     )])
     fig.update_layout(
