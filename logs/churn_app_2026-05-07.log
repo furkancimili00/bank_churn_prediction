@@ -1,0 +1,134 @@
+2026-05-07 20:53:37 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 20:53:37 | DEBUG    | eda_service:get_summary_statistics:302 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-07 20:53:37 | DEBUG    | eda_service:create_correlation_heatmap:77 - Korelasyon ısı haritası oluşturuldu
+2026-05-07 20:53:38 | DEBUG    | eda_service:create_distribution_histograms:135 - Dağılım histogramları oluşturuldu
+2026-05-07 20:53:38 | DEBUG    | eda_service:create_churn_boxplots:189 - Boxplot grafikleri oluşturuldu
+2026-05-07 20:53:38 | DEBUG    | eda_service:create_churn_rate_by_category:274 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-07 20:53:39 | DEBUG    | eda_service:create_categorical_analysis:221 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-07 20:53:39 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 20:53:39 | INFO     | model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-07 20:53:39 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 20:53:40 | DEBUG    | segmentation_service:find_optimal_k:64 - Elbow grafiği oluşturuldu
+2026-05-07 20:53:40 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-07 20:53:40 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-07 20:58:17 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: acil (prob=0.75)
+2026-05-07 20:58:17 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📞 Telefon + 📧 E-posta (Müşteri Temsilcisi Ataması)
+2026-05-07 20:58:17 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Acil Elde Tutma Paketi
+2026-05-07 20:58:17 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €500.0
+2026-05-07 20:58:17 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Acil Elde Tutma Paketi (bütçe: €500)
+2026-05-07 20:58:17 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: normal (prob=0.50)
+2026-05-07 20:58:17 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📧 E-posta + 📱 Uygulama Bildirimi
+2026-05-07 20:58:17 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Sadakat Kampanyası
+2026-05-07 20:58:17 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €150.0
+2026-05-07 20:58:17 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Sadakat Kampanyası (bütçe: €150)
+2026-05-07 20:58:17 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: düşük (prob=0.20)
+2026-05-07 20:58:17 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Rutin İletişim
+2026-05-07 20:58:17 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €25.0
+2026-05-07 20:58:17 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Rutin İletişim (bütçe: €25)
+2026-05-07 20:58:17 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: acil (prob=0.85)
+2026-05-07 20:58:17 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📞 Telefon + 📧 E-posta (Müşteri Temsilcisi Ataması)
+2026-05-07 20:58:17 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Acil Elde Tutma Paketi
+2026-05-07 20:58:17 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €500.0
+2026-05-07 20:58:17 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Acil Elde Tutma Paketi (bütçe: €500)
+2026-05-07 20:58:18 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: düşük (prob=0.15)
+2026-05-07 20:58:18 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Rutin İletişim
+2026-05-07 20:58:18 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €25.0
+2026-05-07 20:58:18 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Rutin İletişim (bütçe: €25)
+2026-05-07 20:59:32 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: acil (prob=0.75)
+2026-05-07 20:59:32 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📞 Telefon + 📧 E-posta (Müşteri Temsilcisi Ataması)
+2026-05-07 20:59:32 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Acil Elde Tutma Paketi
+2026-05-07 20:59:32 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €500.0
+2026-05-07 20:59:32 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Acil Elde Tutma Paketi (bütçe: €500)
+2026-05-07 20:59:32 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: normal (prob=0.50)
+2026-05-07 20:59:32 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📧 E-posta + 📱 Uygulama Bildirimi
+2026-05-07 20:59:32 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Sadakat Kampanyası
+2026-05-07 20:59:32 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €150.0
+2026-05-07 20:59:32 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Sadakat Kampanyası (bütçe: €150)
+2026-05-07 20:59:32 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: düşük (prob=0.20)
+2026-05-07 20:59:32 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Rutin İletişim
+2026-05-07 20:59:32 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €25.0
+2026-05-07 20:59:32 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Rutin İletişim (bütçe: €25)
+2026-05-07 20:59:32 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: acil (prob=0.85)
+2026-05-07 20:59:32 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📞 Telefon + 📧 E-posta (Müşteri Temsilcisi Ataması)
+2026-05-07 20:59:32 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Acil Elde Tutma Paketi
+2026-05-07 20:59:32 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €500.0
+2026-05-07 20:59:32 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Acil Elde Tutma Paketi (bütçe: €500)
+2026-05-07 20:59:32 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: düşük (prob=0.15)
+2026-05-07 20:59:32 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Rutin İletişim
+2026-05-07 20:59:32 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €25.0
+2026-05-07 20:59:32 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Rutin İletişim (bütçe: €25)
+2026-05-07 21:00:57 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:00:57 | DEBUG    | eda_service:get_summary_statistics:302 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-07 21:00:57 | DEBUG    | eda_service:create_correlation_heatmap:77 - Korelasyon ısı haritası oluşturuldu
+2026-05-07 21:00:57 | DEBUG    | eda_service:create_distribution_histograms:135 - Dağılım histogramları oluşturuldu
+2026-05-07 21:00:57 | DEBUG    | eda_service:create_churn_boxplots:189 - Boxplot grafikleri oluşturuldu
+2026-05-07 21:00:57 | DEBUG    | eda_service:create_churn_rate_by_category:274 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-07 21:00:57 | DEBUG    | eda_service:create_categorical_analysis:221 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-07 21:00:57 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:00:57 | INFO     | model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-07 21:00:58 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:00:58 | DEBUG    | segmentation_service:find_optimal_k:64 - Elbow grafiği oluşturuldu
+2026-05-07 21:00:58 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:00:58 | INFO     | fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-07 21:00:58 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-07 21:00:58 | INFO     | fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-07 21:00:58 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-07 21:00:58 | INFO     | fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-07 21:00:58 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-07 21:00:59 | INFO     | fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-07 21:00:59 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-07 21:01:16 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:01:16 | DEBUG    | eda_service:get_summary_statistics:302 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-07 21:01:16 | DEBUG    | eda_service:create_correlation_heatmap:77 - Korelasyon ısı haritası oluşturuldu
+2026-05-07 21:01:16 | DEBUG    | eda_service:create_distribution_histograms:135 - Dağılım histogramları oluşturuldu
+2026-05-07 21:01:17 | DEBUG    | eda_service:create_churn_boxplots:189 - Boxplot grafikleri oluşturuldu
+2026-05-07 21:01:17 | DEBUG    | eda_service:create_churn_rate_by_category:274 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-07 21:01:17 | DEBUG    | eda_service:create_categorical_analysis:221 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-07 21:01:17 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:01:17 | INFO     | model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-07 21:01:17 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:01:18 | DEBUG    | segmentation_service:find_optimal_k:64 - Elbow grafiği oluşturuldu
+2026-05-07 21:01:18 | INFO     | eda_service:load_default_dataset:38 - Varsayılan veri seti yüklendi: 500 satır
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-07 21:01:18 | INFO     | fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-07 21:01:19 | DEBUG    | customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-07 21:01:19 | DEBUG    | customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-07 21:04:34 | INFO     | main:<module>:78 - Model başarıyla yüklendi. Özellik sayısı: 11
+2026-05-07 21:04:36 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: acil (prob=0.75)
+2026-05-07 21:04:36 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📞 Telefon + 📧 E-posta (Müşteri Temsilcisi Ataması)
+2026-05-07 21:04:36 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Acil Elde Tutma Paketi
+2026-05-07 21:04:36 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €500.0
+2026-05-07 21:04:36 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Acil Elde Tutma Paketi (bütçe: €500)
+2026-05-07 21:04:36 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: normal (prob=0.50)
+2026-05-07 21:04:36 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📧 E-posta + 📱 Uygulama Bildirimi
+2026-05-07 21:04:36 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Sadakat Kampanyası
+2026-05-07 21:04:36 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €150.0
+2026-05-07 21:04:36 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Sadakat Kampanyası (bütçe: €150)
+2026-05-07 21:04:36 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: düşük (prob=0.20)
+2026-05-07 21:04:36 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Rutin İletişim
+2026-05-07 21:04:36 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €25.0
+2026-05-07 21:04:36 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Rutin İletişim (bütçe: €25)
+2026-05-07 21:04:36 | INFO     | main:batch_predict_churn:244 - Toplu tahmin: 2 müşteri, 1 yüksek riskli
+2026-05-07 21:04:36 | INFO     | main:batch_predict_churn:244 - Toplu tahmin: 3 müşteri, 1 yüksek riskli
+2026-05-07 21:04:36 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: acil (prob=0.85)
+2026-05-07 21:04:36 | DEBUG    | agents:select_channel:72 - İletişim kanalı seçildi: 📞 Telefon + 📧 E-posta (Müşteri Temsilcisi Ataması)
+2026-05-07 21:04:36 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Acil Elde Tutma Paketi
+2026-05-07 21:04:36 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €500.0
+2026-05-07 21:04:36 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Acil Elde Tutma Paketi (bütçe: €500)
+2026-05-07 21:04:36 | INFO     | agents:assess_risk:50 - Risk değerlendirmesi: düşük (prob=0.15)
+2026-05-07 21:04:36 | DEBUG    | agents:generate_campaign:112 - Kampanya üretildi: Rutin İletişim
+2026-05-07 21:04:36 | DEBUG    | agents:calculate_budget:134 - Bütçe hesaplandı: €25.0
+2026-05-07 21:04:36 | INFO     | agents:run_agent:212 - Ajan akışı tamamlandı: Rutin İletişim (bütçe: €25)
