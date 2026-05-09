@@ -1,1 +1,59 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+
+# ===== Ortam / Sanal Ortam =====
+.env
+.venv
+env/
+venv/
+ENV/
+
+# ===== IDE =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== Jupyter Notebook =====
+.ipynb_checkpoints/
+
+# ===== Pytest / Test =====
+.pytest_cache/
+htmlcov/
 .coverage
+coverage.xml
+
+# ===== Loglar =====
+logs/
+*.log
+
+# ===== Docker =====
+docker-compose.override.yml
+
+# ===== Güvenlik / Sırlar =====
+.streamlit/secrets.toml
+*.pem
+*.key
+
+# ===== Büyük Veri Dosyaları =====
+*.csv
+!Churn_Modelling.csv
+
+# ===== Geçici Dosyalar =====
+*.tmp
+*.bak
+*.orig

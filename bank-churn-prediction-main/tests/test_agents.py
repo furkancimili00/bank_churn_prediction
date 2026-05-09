@@ -5,7 +5,7 @@ import pytest
 # Proje ana dizinini Python yoluna ekle
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from agents import run_agent
+from agents.churn_agent import run_agent
 
 
 def test_agent_high_risk():
@@ -16,7 +16,10 @@ def test_agent_high_risk():
     result = run_agent(
         customer_id="TEST-001", churn_probability=0.75, risk_level="Yüksek"
     )
-    assert result["recommended_action"] == "Acil İletişim & %20 İndirim Maili Gönder"
+    assert result["recommended_action"] == "Acil İletişim & %20 İndirim + VIP Statüsü"
+    assert result["campaign_type"] == "Acil Elde Tutma Paketi"
+    assert result["urgency"] == "acil"
+    assert result["estimated_budget"] == 500.0
 
 
 def test_agent_medium_risk():
@@ -27,7 +30,10 @@ def test_agent_medium_risk():
     result = run_agent(
         customer_id="TEST-002", churn_probability=0.50, risk_level="Orta"
     )
-    assert result["recommended_action"] == "Kredi Kartı Kampanyası Öner"
+    assert result["recommended_action"] == "Kredi Kartı Kampanyası + Bonus Puan"
+    assert result["campaign_type"] == "Sadakat Kampanyası"
+    assert result["urgency"] == "normal"
+    assert result["estimated_budget"] == 150.0
 
 
 def test_agent_low_risk():
@@ -39,3 +45,6 @@ def test_agent_low_risk():
         customer_id="TEST-003", churn_probability=0.20, risk_level="Düşük"
     )
     assert result["recommended_action"] == "İşlem Yok (Sadık Müşteri)"
+    assert result["campaign_type"] == "Rutin İletişim"
+    assert result["urgency"] == "düşük"
+    assert result["estimated_budget"] == 25.0

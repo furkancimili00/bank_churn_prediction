@@ -2,9 +2,8 @@ import pandas as pd
 import numpy as np
 import shap
 import skops.io as sio
-import asyncio
 import streamlit as st
-from utils import preprocess_data
+from core.utils import preprocess_data
 
 
 @st.cache_resource
@@ -16,7 +15,8 @@ def load_local_model():
         tuple: (model, scaler, expected_features)
     """
     try:
-        pack = sio.load("churn_thesis_model.skops", trusted=True)
+        untrusted = sio.get_untrusted_types(file="churn_thesis_model.skops")
+        pack = sio.load("churn_thesis_model.skops", trusted=untrusted)
         return pack["model"], pack["scaler"], pack["features"]
     except Exception as e:
         st.error(f"Model dosyası yüklenemedi: {e}")
@@ -35,7 +35,6 @@ def get_shap_explainer(_model):
     Returns:
         shap.TreeExplainer: Model açıklayıcısı
     """
-    asyncio.set_event_loop(asyncio.new_event_loop())
     return shap.TreeExplainer(_model)
 
 

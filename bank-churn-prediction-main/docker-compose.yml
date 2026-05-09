@@ -2,30 +2,43 @@ version: '3.8'
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: churn_api
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
     ports:
       - "8000:8000"
     environment:
-      - CHURN_API_KEY=${CHURN_API_KEY:-test_api_key}
+      - CHURN_API_KEY=${CHURN_API_KEY:-admin_super_secret_key}
+      - CORS_ORIGINS=http://localhost:8501,http://frontend:8501
+    volumes:
+      - api_logs:/app/logs
+    networks:
+      - churn_network
     restart: always
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
 
   frontend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: churn_dashboard
     command: streamlit run dashboard.py --server.port=8501 --server.address=0.0.0.0
     ports:
       - "8501:8501"
     environment:
-      - CHURN_API_KEY=${CHURN_API_KEY:-test_api_key}
+      - CHURN_API_KEY=${CHURN_API_KEY:-admin_super_secret_key}
       - API_URL=http://api:8000
+    volumes:
+      - dashboard_logs:/app/logs
+    networks:
+      - churn_network
     depends_on:
       api:
         condition: service_healthy
@@ -36,3 +49,13 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+
+volumes:
+  api_logs:
+    driver: local
+  dashboard_logs:
+    driver: local
+
+networks:
+  churn_network:
+    driver: bridge

@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import json
 import time
 import pytest
@@ -6,7 +8,10 @@ from datetime import datetime
 from skops.io import load, get_untrusted_types
 from sklearn.metrics import f1_score, roc_auc_score
 import pandas as pd
-from utils import preprocess_data
+from core.utils import preprocess_data
+from core.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 # Constants based on THESIS_CONTEXT.md
 TARGET_F1_SCORE = 0.85
@@ -18,7 +23,7 @@ def load_data(filepath: str = "Churn_Modelling.csv") -> pd.DataFrame:
     try:
         return pd.read_csv(filepath)
     except FileNotFoundError:
-        print(f"Data file {filepath} not found for QA testing.")
+        logger.warning(f"Veri dosyası bulunamadı: {filepath}")
         return None
 
 
@@ -34,7 +39,7 @@ def run_qa_checks():
 
     # 1. Test Suite Başarısı
     report_lines.append("## 1. Test Suite Durumu")
-    print("Çalıştırılıyor: Test suite...")
+    logger.info("Çalıştırılıyor: Test suite...")
 
     # Run pytest and capture output
     test_result = pytest.main(["--tb=short", "-q"])
@@ -49,7 +54,7 @@ def run_qa_checks():
 
     # 2. Model Metrikleri
     report_lines.append("\n## 2. Model Metrikleri")
-    print("Çalıştırılıyor: Model metrikleri...")
+    logger.info("Çalıştırılıyor: Model metrikleri...")
 
     try:
         untrusted = get_untrusted_types(file="churn_thesis_model.skops")
@@ -104,7 +109,7 @@ def run_qa_checks():
 
     # 3. API Yanıt Süresi (Simüle edilmiş veya local üzerinden test edilebilir)
     report_lines.append("\n## 3. API Yanıt Süresi")
-    print("Çalıştırılıyor: API yanıt süresi...")
+    logger.info("Çalıştırılıyor: API yanıt süresi...")
     try:
         from fastapi.testclient import TestClient
         from main import app
@@ -168,11 +173,11 @@ def run_qa_checks():
     with open(report_path, "w", encoding="utf-8") as f:
         f.write("\n".join(report_lines))
 
-    print(f"QA raporu oluşturuldu: {report_path}")
+    logger.success(f"QA raporu oluşturuldu: {report_path}")
 
     # QA process should exit with non-zero code if anything failed to break CI
     if not all_passed:
-        print("Uyarı: QA metrikleri karşılanmadı.")
+        logger.warning("QA metrikleri karşılanmadı.")
         # We don't necessarily exit 1 here unless we strictly want to fail the CI build.
         # But failing the CI might block legitimate work, so we'll just log it.
         # Actually, let's exit with 0 so the report is generated, but print a warning.

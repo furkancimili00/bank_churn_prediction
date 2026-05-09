@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 # Proje ana dizinini Python yoluna ekle ki utils modülü içeri aktarılabilsin
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from utils import preprocess_data
+from core.utils import preprocess_data
 
 
 def test_preprocess_data():

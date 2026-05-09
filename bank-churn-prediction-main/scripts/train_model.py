@@ -10,7 +10,10 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from xgboost import XGBClassifier
 from imblearn.over_sampling import SMOTE
 from sklearn.metrics import classification_report, roc_auc_score
-from utils import preprocess_data
+from core.utils import preprocess_data
+from core.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 def load_data(filepath: str = "Churn_Modelling.csv") -> pd.DataFrame:
@@ -23,21 +26,22 @@ def train_and_optimize():
     # Mevcut modelden scaler ve özellikleri çekmek
     # Böylece production sistemleriyle tam uyum sağlanır
     try:
-        model_pack = sio.load("churn_thesis_model.skops", trusted=True)
+        untrusted = sio.get_untrusted_types(file="churn_thesis_model.skops")
+        model_pack = sio.load("churn_thesis_model.skops", trusted=untrusted)
         scaler = model_pack["scaler"]
         features = model_pack["features"]
 
         # Scaler'ı diske ayrıca kaydediyoruz
         sio.dump(scaler, "scaler.skops")
-        print("Scaler 'scaler.skops' olarak diske kaydedildi.")
+        logger.info("Scaler 'scaler.skops' olarak diske kaydedildi.")
     except Exception as e:
-        print(f"Mevcut model yüklenemedi: {e}")
+        logger.error(f"Mevcut model yüklenemedi: {e}")
         return
 
     try:
         df = load_data()
     except FileNotFoundError:
-        print(
+        logger.warning(
             "Veriseti bulunamadı, lütfen 'Churn_Modelling.csv' dosyasını çalışma dizinine ekleyin. Scaler mevcut modelden çıkartıldı."
         )
         return
@@ -65,7 +69,7 @@ def train_and_optimize():
         "scale_pos_weight": [sum(y_train == 0) / sum(y_train == 1)],
     }
 
-    print("Hiperparametre optimizasyonu başlatılıyor...")
+    logger.info("Hiperparametre optimizasyonu başlatılıyor...")
     grid_search = GridSearchCV(
         estimator=xgb,
         param_grid=param_grid,
@@ -78,15 +82,15 @@ def train_and_optimize():
 
     best_model = grid_search.best_estimator_
 
-    print("\nEn iyi parametreler:", grid_search.best_params_)
+    logger.info(f"En iyi parametreler: {grid_search.best_params_}")
 
     # Test setinde değerlendirme
     y_pred = best_model.predict(X_test)
     y_proba = best_model.predict_proba(X_test)[:, 1]
 
-    print("\nSınıflandırma Raporu (Classification Report):")
-    print(classification_report(y_test, y_pred))
-    print("Test Seti ROC AUC Skoru:", roc_auc_score(y_test, y_proba))
+    logger.info("Sınıflandırma Raporu (Classification Report):")
+    logger.info(f"\n{classification_report(y_test, y_pred)}")
+    logger.info(f"Test Seti ROC AUC Skoru: {roc_auc_score(y_test, y_proba)}")
 
     # Modeli diske yazma
     sio.dump(
@@ -97,7 +101,7 @@ def train_and_optimize():
     # Yeni eğitilen scaler'ı da diske kaydediyoruz
     sio.dump(scaler, "scaler.skops")
 
-    print("\nModel başarıyla 'churn_thesis_model.skops' konumuna kaydedildi.")
+    logger.success("Model başarıyla 'churn_thesis_model.skops' konumuna kaydedildi.")
 
 
 if __name__ == "__main__":

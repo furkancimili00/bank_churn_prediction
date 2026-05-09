@@ -1,5 +1,5 @@
 # QA Agent Report
-**Tarih:** 2026-05-07 19:41:43
+**Tarih:** 2026-05-09 09:51:48
 
 Bu rapor, THESIS_CONTEXT.md'de belirtilen hedeflere uyumluluğu kontrol etmek üzere otomatik olarak oluşturulmuştur.
 
@@ -11,7 +11,7 @@ Bu rapor, THESIS_CONTEXT.md'de belirtilen hedeflere uyumluluğu kontrol etmek ü
 ✅ **ROC-AUC:** 1.0000 (Hedef: > 0.9)
 
 ## 3. API Yanıt Süresi
-✅ **API Yanıt Süresi:** 0.0049s (Hedef: < 1.0s)
+✅ **API Yanıt Süresi:** 0.0295s (Hedef: < 1.0s)
 
 ## Genel Sonuç
 🎉 **Tüm tez metrikleri (Testler, F1, ROC-AUC, API Yanıt Süresi) hedefleri karşılıyor!**

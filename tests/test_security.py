@@ -1,51 +1,50 @@
-import sys
-from unittest.mock import MagicMock
+"""
+Güvenlik mantığı birim testleri.
+API anahtarı doğrulama mantığını izole edilmiş bir şekilde test eder.
+"""
 
-# FastAPI ve diğer bağımlılıkları mock'layalım
-mock_fastapi = MagicMock()
-sys.modules["fastapi"] = mock_fastapi
-sys.modules["fastapi.security"] = MagicMock()
-sys.modules["pydantic"] = MagicMock()
-sys.modules["joblib"] = MagicMock()
-sys.modules["pandas"] = MagicMock()
-sys.modules["numpy"] = MagicMock()
+import pytest
 
-def test_security_logic_v2():
-    print("Güvenlik mantığı testi v2 başlatılıyor (Refactored)...")
 
-    # Test edilecek mantık (main.py'den alınmıştır)
-    def mock_get_api_key(api_key_header_val, env_api_key):
-        if not env_api_key:
-            return "500 Internal Server Error"
+def _mock_get_api_key(api_key_header_val: str, env_api_key: str) -> str:
+    """
+    main.py içerisindeki get_api_key fonksiyonunun iş mantığını simüle eder.
 
-        if api_key_header_val == env_api_key:
-            return "Success"
+    Args:
+        api_key_header_val (str): İstek başlığından gelen API anahtarı.
+        env_api_key (str): Ortam değişkenindeki API anahtarı.
 
-        return "401 Unauthorized"
+    Returns:
+        str: Doğrulama sonucu mesajı.
+    """
+    if not env_api_key:
+        return "500 Internal Server Error"
 
-    # Senaryo 1: Ortam değişkeni ayarlanmamış
-    print("Senaryo 1: Ortam değişkeni ayarlanmamış")
-    res1 = mock_get_api_key("herhangi-bir-key", None)
-    assert res1 == "500 Internal Server Error"
-    print("✅ Ortam değişkeni eksikliği testi başarılı.")
+    if api_key_header_val == env_api_key:
+        return "Success"
 
-    # Senaryo 2: Geçerli API Anahtarı
-    print("Senaryo 2: Geçerli API Anahtarı")
-    res2 = mock_get_api_key("secret123", "secret123")
-    assert res2 == "Success"
-    print("✅ Geçerli anahtar testi başarılı.")
+    return "401 Unauthorized"
 
-    # Senaryo 3: Geçersiz API Anahtarı
-    print("Senaryo 3: Geçersiz API Anahtarı")
-    res3 = mock_get_api_key("yanlis-key", "secret123")
-    assert res3 == "401 Unauthorized"
-    print("✅ Geçersiz anahtar testi başarılı.")
 
-    # Senaryo 4: Eksik API Anahtarı (None)
-    print("Senaryo 4: Eksik API Anahtarı (Header yok)")
-    res4 = mock_get_api_key(None, "secret123")
-    assert res4 == "401 Unauthorized"
-    print("✅ Eksik anahtar testi başarılı.")
+def test_security_env_not_set() -> None:
+    """Ortam değişkeni ayarlanmamışsa 500 hatası dönmeli."""
+    result = _mock_get_api_key("herhangi-bir-key", None)
+    assert result == "500 Internal Server Error"
 
-if __name__ == "__main__":
-    test_security_logic_v2()
+
+def test_security_valid_key() -> None:
+    """Geçerli API anahtarı ile başarılı yanıt dönmeli."""
+    result = _mock_get_api_key("secret123", "secret123")
+    assert result == "Success"
+
+
+def test_security_invalid_key() -> None:
+    """Geçersiz API anahtarı ile 401 hatası dönmeli."""
+    result = _mock_get_api_key("yanlis-key", "secret123")
+    assert result == "401 Unauthorized"
+
+
+def test_security_missing_key() -> None:
+    """Header'da API anahtarı yoksa (None) 401 hatası dönmeli."""
+    result = _mock_get_api_key(None, "secret123")
+    assert result == "401 Unauthorized"

@@ -33,7 +33,7 @@ with patch("skops.io.load") as mock_load:
     mock_pack = {"model": mock_model, "scaler": mock_scaler, "features": mock_features}
     mock_load.return_value = mock_pack
 
-    import dashboard
+    import services.prediction as services_prediction
 
 
 def test_make_prediction_eksik_ozellikler():
@@ -53,7 +53,7 @@ def test_make_prediction_eksik_ozellikler():
     }
 
     # Tahmin fonksiyonunu çağırıyoruz
-    sonuc = dashboard.make_prediction(
+    sonuc = services_prediction.make_prediction(
         eksik_musteri_verisi, mock_model, mock_scaler, mock_features
     )
 

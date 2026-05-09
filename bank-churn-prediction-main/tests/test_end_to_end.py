@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from fastapi.testclient import TestClient
 from main import app
 import main
-from agents import run_agent
+from agents.churn_agent import run_agent
 
 client = TestClient(app)
 
@@ -87,8 +87,9 @@ def test_end_to_end_churn_prediction_and_agent(mock_env, monkeypatch):
     assert agent_result["churn_probability"] == prob
     assert agent_result["risk_level"] == expected_risk
     assert (
-        agent_result["recommended_action"] == "Acil İletişim & %20 İndirim Maili Gönder"
+        agent_result["recommended_action"] == "Acil İletişim & %20 İndirim + VIP Statüsü"
     )
+    assert agent_result["campaign_type"] == "Acil Elde Tutma Paketi"
 
 
 def test_end_to_end_loyal_customer_agent(mock_env, monkeypatch):
@@ -135,3 +136,4 @@ def test_end_to_end_loyal_customer_agent(mock_env, monkeypatch):
     assert agent_result["churn_probability"] == prob
     assert agent_result["risk_level"] == expected_risk
     assert agent_result["recommended_action"] == "İşlem Yok (Sadık Müşteri)"
+    assert agent_result["campaign_type"] == "Rutin İletişim"
