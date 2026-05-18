@@ -1,3 +1,4 @@
+from ui.i18n import t
 import streamlit as st
 from services.eda_service import load_default_dataset
 from services.segmentation_service import (
@@ -10,7 +11,7 @@ from services.segmentation_service import (
 )
 
 def render_tab_segmentation(local_model=None, local_scaler=None, expected_features=None):
-        st.subheader("🎯 Müşteri Segmentasyonu (K-Means Kümeleme)")
+        st.subheader(t("seg_title"))
         st.write(
             "Müşterilerinizi davranış ve demografik özelliklerine göre otomatik segmentlere ayırın. "
             "Her segmentin risk profilini ve özelliklerini keşfedin."
@@ -25,15 +26,15 @@ def render_tab_segmentation(local_model=None, local_scaler=None, expected_featur
                 st.caption("Grafiğin dirsek (elbow) noktası, optimum küme sayısını gösterir.")
     
             n_clusters = st.slider(
-                "Küme Sayısını Seçin (k):", min_value=2, max_value=6, value=3, key="seg_k"
+                t("seg_k"), min_value=2, max_value=6, value=3, key="seg_k"
             )
     
-            if st.button("🚀 Segmentasyonu Başlat", use_container_width=True, type="primary"):
+            if st.button(t("seg_btn"), use_container_width=True, type="primary"):
                 with st.spinner("Kümeleme analizi yapılıyor..."):
                     df_seg, X_scaled, _ = perform_segmentation(seg_df, n_clusters)
     
                     # Özet Tablosu
-                    st.markdown("### 📋 Segment Özet Tablosu")
+                    st.markdown(t("seg_summary"))
                     fig_summary = create_segment_summary_table(df_seg)
                     st.plotly_chart(fig_summary, use_container_width=True)
     
@@ -42,7 +43,7 @@ def render_tab_segmentation(local_model=None, local_scaler=None, expected_featur
     
                     # PCA Scatter
                     with seg_col1:
-                        st.markdown("### 📊 PCA Kümeleme Görselleştirmesi")
+                        st.markdown(t("seg_pca"))
                         fig_pca = create_pca_scatter(df_seg, X_scaled)
                         st.plotly_chart(fig_pca, use_container_width=True)
     
@@ -50,15 +51,15 @@ def render_tab_segmentation(local_model=None, local_scaler=None, expected_featur
                     with seg_col2:
                         fig_churn_bar = create_segment_churn_bar(df_seg)
                         if fig_churn_bar is not None:
-                            st.markdown("### 📊 Segment Bazında Churn Oranı")
+                            st.markdown(t("seg_rate"))
                             st.plotly_chart(fig_churn_bar, use_container_width=True)
     
                     st.write("---")
                     # Radar Profil
-                    st.markdown("### 🕸️ Segment Profilleri (Radar)")
+                    st.markdown(t("seg_radar"))
                     fig_radar = create_segment_profile(df_seg)
                     st.plotly_chart(fig_radar, use_container_width=True)
         else:
-            st.warning("⚠️ Varsayılan veri seti bulunamadı.")
+            st.warning(t("seg_no_data"))
     
     # --- SEKME 8: ADİLLİK VE ÖNYARGI (FAIRNESS) ---

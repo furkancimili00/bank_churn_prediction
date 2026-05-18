@@ -4,6 +4,9 @@ from typing import Any, Optional
 
 import numpy as np
 import pandas as pd
+import sys
+sys.modules["transformers"] = None
+sys.modules["tensorflow"] = None
 import shap
 
 from core.config import get_settings

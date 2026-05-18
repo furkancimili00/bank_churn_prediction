@@ -18,6 +18,8 @@ from ui.tabs.tab_profile_card import render_tab_profile_card
 from ui.tabs.tab_segmentation import render_tab_segmentation
 from ui.tabs.tab_single_analysis import render_tab_single_analysis
 from ui.tabs.tab_whatif_simulator import render_tab_whatif_simulator
+from ui.i18n import init_i18n, t, render_language_and_theme_toggles
+from ui.ai_assistant import render_floating_assistant
 
 os.environ["USE_TF"] = "NO"
 os.environ["USE_TORCH"] = "NO"
@@ -31,20 +33,21 @@ class DashboardTab:
     renderer: Callable[[Any, Any, list[str]], None]
 
 
-TAB_DEFINITIONS = [
-    DashboardTab("👤 Tekil Analiz", render_tab_single_analysis),
-    DashboardTab("🧪 What-If", render_tab_whatif_simulator),
-    DashboardTab("📂 Toplu Analiz", render_tab_batch_analysis),
-    DashboardTab("📝 Yönetim Raporu", render_tab_management_report),
-    DashboardTab("📈 EDA", render_tab_eda),
-    DashboardTab("🏆 Performans", render_tab_performance),
-    DashboardTab("🎯 Segmentasyon", render_tab_segmentation),
-    DashboardTab("⚖️ Adillik", render_tab_fairness),
-    DashboardTab("👤 Profil Kartı", render_tab_profile_card),
-    DashboardTab("🔒 Gizlilik", render_tab_privacy),
-    DashboardTab("📉 Drift Analizi", render_tab_drift),
-    DashboardTab("📜 Denetim Günlüğü", render_tab_audit_logs),
-]
+def get_tab_definitions():
+    return [
+        DashboardTab(t("tab_single"), render_tab_single_analysis),
+        DashboardTab(t("tab_whatif"), render_tab_whatif_simulator),
+        DashboardTab(t("tab_batch"), render_tab_batch_analysis),
+        DashboardTab(t("tab_report"), render_tab_management_report),
+        DashboardTab(t("tab_eda"), render_tab_eda),
+        DashboardTab(t("tab_perf"), render_tab_performance),
+        DashboardTab(t("tab_segment"), render_tab_segmentation),
+        DashboardTab(t("tab_fair"), render_tab_fairness),
+        DashboardTab(t("tab_profile"), render_tab_profile_card),
+        DashboardTab(t("tab_privacy"), render_tab_privacy),
+        DashboardTab(t("tab_drift"), render_tab_drift),
+        DashboardTab(t("tab_audit"), render_tab_audit_logs),
+    ]
 
 local_model, local_scaler, expected_features = load_local_model()
 
@@ -53,6 +56,7 @@ st.set_page_config(page_title="Banka Churn Risk Paneli", page_icon="🏦", layou
 
 def initialize_session_state() -> None:
     """Dashboard için gerekli oturum değişkenlerini başlatır."""
+    init_i18n()
     st.session_state.setdefault("logged_in", False)
     st.session_state.setdefault("current_customer", None)
     st.session_state.setdefault("base_risk", None)
@@ -65,49 +69,48 @@ def login_screen() -> None:
     with center_column:
         st.markdown("<h1 style='text-align: center;'>🏦</h1>", unsafe_allow_html=True)
         st.markdown(
-            "<h3 style='text-align: center;'>Kurumsal Yönetici Girişi</h3>",
+            f"<h3 style='text-align: center;'>{t("login_title")}</h3>",
             unsafe_allow_html=True,
         )
         st.write("---")
-        username = st.text_input("Kullanıcı Adı")
-        password = st.text_input("Şifre", type="password")
+        username = st.text_input(t("username"))
+        password = st.text_input(t("password"), type="password")
 
-        if st.button("Sisteme Giriş Yap", use_container_width=True):
+        if st.button(t("login_btn"), use_container_width=True):
             if (
                 username == st.secrets["auth"]["username"]
                 and password == st.secrets["auth"]["password"]
             ):
                 st.session_state.logged_in = True
-                st.success("Giriş başarılı.")
+                st.success(t("login_success"))
                 st.rerun()
             else:
-                st.error("Hatalı kullanıcı adı veya şifre.")
+                st.error(t("login_error"))
 
 
 def render_sidebar() -> None:
     """Dashboard yan menüsünü render eder."""
-    st.sidebar.title("Yönetici Menüsü")
-    st.sidebar.info("Hoş geldiniz, **Şube Müdürü**")
+    st.sidebar.title(t("menu_title"))
+    st.sidebar.info(f'{t("welcome")} **{t("manager")}**')
 
     st.sidebar.markdown("---")
-    st.sidebar.subheader("ℹ️ Uygulama Hakkında")
+    st.sidebar.subheader(t("about"))
     st.sidebar.write(
-        "Bu panel, müşteri terk riskini analiz etmek, simüle etmek ve toplu "
-        "değerlendirmeler yapmak için geliştirilmiştir."
+        t("about_desc1")
     )
-    st.sidebar.write("Yapay zeka destekli tahmin ve kampanya öneri sistemleri içerir.")
+    st.sidebar.write(t("about_desc2"))
 
     st.sidebar.markdown("---")
-    st.sidebar.subheader("📊 Genel Metrikler")
-    st.sidebar.metric(label="Sistem Durumu", value="Aktif", delta="Model Yüklü")
+    st.sidebar.subheader(t("metrics"))
+    st.sidebar.metric(label=t("sys_status"), value=t("active"), delta=t("model_loaded"))
 
-    if st.sidebar.button("🚪 Güvenli Çıkış Yap"):
+    if st.sidebar.button(t("logout")):
         log_event("logout", {"user": "admin"})
         st.session_state.logged_in = False
         st.rerun()
 
     st.sidebar.markdown("---")
-    st.sidebar.subheader("🎓 Proje Hakkında")
+    st.sidebar.subheader(t("project_about"))
     st.sidebar.markdown(
         """
         **Banka Müşteri Churn Tahmin Platformu**
@@ -135,12 +138,17 @@ def render_sidebar() -> None:
 def main_dashboard() -> None:
     """Ana dashboard sekmelerini ve ortak layout'u render eder."""
     render_sidebar()
-    st.title("🏦 Şube Müdürü Müşteri Risk Analiz Paneli")
+    render_language_and_theme_toggles()
+    st.title(t("main_title"))
 
-    tabs = st.tabs([tab_definition.title for tab_definition in TAB_DEFINITIONS])
-    for tab_container, tab_definition in zip(tabs, TAB_DEFINITIONS):
+    tab_defs = get_tab_definitions()
+    tabs = st.tabs([td.title for td in tab_defs])
+    for tab_container, tab_definition in zip(tabs, tab_defs):
         with tab_container:
             tab_definition.renderer(local_model, local_scaler, expected_features)
+            
+    # Sağ alt köşede yüzen AI Asistanı render et
+    render_floating_assistant()
 
 
 if __name__ == "__main__":

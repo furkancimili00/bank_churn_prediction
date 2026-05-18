@@ -1,3 +1,4 @@
+from ui.i18n import t
 import streamlit as st
 from services.eda_service import load_default_dataset
 from services.fairness_service import (
@@ -10,7 +11,7 @@ from services.fairness_service import (
 )
 
 def render_tab_fairness(local_model=None, local_scaler=None, expected_features=None):
-        st.subheader("⚖️ Adillik ve Önyargı Analizi (Fairness/Bias)")
+        st.subheader(t("fair_title"))
         st.write(
             "Modelin cinsiyet ve coğrafya bazında adil tahmin yapıp yapmadığını analiz edin. "
             "Tez hedefi: Disparate Impact < 1.2"
@@ -33,7 +34,7 @@ def render_tab_fairness(local_model=None, local_scaler=None, expected_features=N
     
                 # Bias Özet Tablosu
                 if all_di_results:
-                    st.markdown("### 📋 Adillik Özet Raporu")
+                    st.markdown(t("fair_summary"))
                     fig_bias_table = create_bias_summary_table(all_di_results)
                     st.plotly_chart(fig_bias_table, use_container_width=True)
     
@@ -69,8 +70,8 @@ def render_tab_fairness(local_model=None, local_scaler=None, expected_features=N
     
                         st.write("---")
             else:
-                st.warning("⚠️ Varsayılan veri seti bulunamadı.")
+                st.warning(t("seg_no_data"))
         else:
-            st.error("❌ Model yüklenemedi.")
+            st.error(t("fair_no_model"))
     
     # --- SEKME 9: MÜŞTERİ 360° PROFİL KARTI ---

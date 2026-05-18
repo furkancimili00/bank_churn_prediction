@@ -1,3 +1,4 @@
+from ui.i18n import t
 import streamlit as st
 import pandas as pd
 from services.drift_service import (
@@ -8,14 +9,14 @@ from services.drift_service import (
 from services.eda_service import load_default_dataset
 
 def render_tab_drift(local_model=None, local_scaler=None, expected_features=None):
-        st.subheader("📉 Veri Drift Analizi")
+        st.subheader(t("drift_title"))
         st.write(
             "Yeni yüklediğiniz veriyi eğitim verisine kıyaslayın. "
             "PSI ve KS testleri ile dağılım kaymalarını tespit edin."
         )
     
         drift_file = st.file_uploader(
-            "Karşılaştırılacak CSV Dosyası Yükleyin", type=["csv"], key="drift_upload"
+            t("drift_upload"), type=["csv"], key="drift_upload"
         )
     
         ref_df = load_default_dataset()
@@ -39,7 +40,7 @@ def render_tab_drift(local_model=None, local_scaler=None, expected_features=None
                 st.plotly_chart(fig_drift, use_container_width=True)
     
                 # Dağılım Karşılaştırmaları
-                st.markdown("### 📊 Dağılım Karşılaştırmaları")
+                st.markdown(t("drift_dist_comp"))
                 drifted_features = [r["feature"] for r in drift_results if r["psi"] > 0.05]
                 if not drifted_features:
                     drifted_features = [drift_results[0]["feature"]] if drift_results else []
@@ -48,10 +49,10 @@ def render_tab_drift(local_model=None, local_scaler=None, expected_features=None
                     fig_dist = create_drift_distribution_fig(ref_df, cur_df, feat)
                     st.plotly_chart(fig_dist, use_container_width=True)
             else:
-                st.info("Ortak sayısal sütun bulunamadı.")
+                st.info(t("drift_no_num_cols"))
         elif drift_file is None:
-            st.info("📄 Lütfen karşılaştırmak için bir CSV dosyası yükleyin.")
+            st.info(t("drift_upload_req"))
         else:
-            st.warning("⚠️ Referans veri seti (Churn_Modelling.csv) bulunamadı.")
+            st.warning(t("drift_no_ref"))
     
     # --- SEKME 12: DENETİM GÜNLÜĞÜ ---

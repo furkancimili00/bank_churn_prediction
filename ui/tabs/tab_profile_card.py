@@ -1,3 +1,4 @@
+from ui.i18n import t
 import streamlit as st
 from services.customer_profile_service import (
     compute_customer_value_breakdown,
@@ -8,7 +9,7 @@ from services.customer_profile_service import (
 )
 
 def render_tab_profile_card(local_model=None, local_scaler=None, expected_features=None):
-        st.subheader("👤 Müşteri 360° Profil Kartı")
+        st.subheader(t("prof_title"))
         st.write(
             "Tekil Analiz sekmesinden analiz yapıldıktan sonra, müşterinin tüm bilgileri, "
             "risk detayları ve benzer müşteriler burada görüntülenir."
@@ -35,18 +36,18 @@ def render_tab_profile_card(local_model=None, local_scaler=None, expected_featur
     
             # SHAP Waterfall
             if local_model is not None:
-                st.markdown("### 🌊 SHAP Waterfall Analizi")
+                st.markdown(t("prof_shap"))
                 fig_waterfall = create_shap_waterfall(cust, local_model, local_scaler, expected_features)
                 if fig_waterfall is not None:
                     st.plotly_chart(fig_waterfall, use_container_width=True)
                 else:
-                    st.info("SHAP Waterfall hesaplanamadı.")
+                    st.info(t("prof_no_shap"))
     
             st.write("---")
     
             # Risk Geçmişi
             if st.session_state.risk_history:
-                st.markdown("### 📈 Oturum İçi Risk Analizi Geçmişi")
+                st.markdown(t("prof_history"))
                 fig_history = create_risk_history_chart(st.session_state.risk_history)
                 if fig_history is not None:
                     st.plotly_chart(fig_history, use_container_width=True)
@@ -54,16 +55,16 @@ def render_tab_profile_card(local_model=None, local_scaler=None, expected_featur
             st.write("---")
     
             # Benzer Müşteriler
-            st.markdown("### 🔍 Benzer Profilli Müşteriler")
-            n_similar = st.slider("Gösterilecek benzer müşteri sayısı:", 3, 10, 5, key="sim_n")
+            st.markdown(t("prof_sim_cust"))
+            n_similar = st.slider(t("prof_num"), 3, 10, 5, key="sim_n")
             similar_df = find_similar_customers(cust, n_neighbors=n_similar)
             if similar_df is not None:
                 st.dataframe(similar_df, use_container_width=True)
             else:
-                st.info("Veri seti bulunamadığı için benzer müşteriler gösterilemiyor.")
+                st.info(t("prof_no_sim_data"))
         else:
             st.warning(
-                "⚠️ Lütfen önce '👤 Tekil Analiz' sekmesinden bir müşteri analizi yapın."
+                t("prof_req")
             )
     
     # --- SEKME 10: VERİ GİZLİLİĞİ (KVKK/GDPR) ---

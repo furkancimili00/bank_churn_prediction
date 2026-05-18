@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 venv/
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
 env/
 .env
 
@@ -12,3 +17,4 @@ env/
 # VS Code / IDE
 .vscode/
 .idea/
+.streamlit/secrets.toml

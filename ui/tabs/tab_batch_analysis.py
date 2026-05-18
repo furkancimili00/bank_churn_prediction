@@ -3,6 +3,7 @@ from typing import Any, Optional
 import numpy as np
 import pandas as pd
 import streamlit as st
+from ui.i18n import t
 
 from services.prediction import make_batch_prediction
 
@@ -344,10 +345,9 @@ def render_tab_batch_analysis(
     """
     st.subheader("📁 Toplu Müşteri Analizi ve Önceliklendirme")
     st.write(
-        "Müşteri verilerinizi içeren CSV dosyasını yükleyerek toplu risk analizi "
-        "yapabilir ve beklenen finansal kayba göre önceliklendirme alabilirsiniz."
+        t("batch_desc")
     )
 
-    uploaded_file = st.file_uploader("CSV Dosyası Seçin", type=["csv"])
+    uploaded_file = st.file_uploader(t("batch_upload_label"), type=["csv"])
     if uploaded_file is not None:
         _handle_uploaded_file(uploaded_file, local_model, local_scaler, expected_features)

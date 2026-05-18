@@ -1,10 +1,11 @@
-from datetime import datetime
+﻿from datetime import datetime
 from typing import Any
 
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+from ui.i18n import t
 
 from agents.churn_agent import run_agent
 from core.utils import preprocess_data
@@ -17,38 +18,47 @@ def _collect_customer_form_data() -> dict[str, Any]:
     Returns:
         dict[str, Any]: Model tahmini için kullanılacak müşteri özellikleri.
     """
-    st.subheader("Müşteri Parametreleri")
-    col_form1, col_form2, col_form3 = st.columns(3)
+    with st.container(border=True):
+        st.subheader(f"📝 {t('single_params')}")
+        col_form1, col_form2, col_form3 = st.columns(3)
 
-    with col_form1:
-        credit_score = st.number_input("Kredi Notu", min_value=300, max_value=850, value=650)
-        age = st.number_input("Yaş", min_value=18, max_value=100, value=40)
-        tenure = st.number_input(
-            "Müşterilik Süresi (Yıl)", min_value=0, max_value=20, value=5
-        )
+        with col_form1:
+            credit_score = st.number_input(t("single_credit_score"), min_value=300, max_value=850, value=650)
+            age = st.number_input(t("single_age"), min_value=18, max_value=100, value=40)
+            tenure = st.number_input(
+                t("single_tenure"), min_value=0, max_value=20, value=5
+            )
 
-    with col_form2:
-        balance = st.number_input(
-            "Hesap Bakiyesi (€)", min_value=0.0, value=50000.0, step=1000.0
-        )
-        est_salary = st.number_input(
-            "Tahmini Maaş (€)", min_value=0.0, value=60000.0, step=1000.0
-        )
-        num_products = st.selectbox("Kullanılan Ürün Sayısı", [1, 2, 3, 4], index=1)
+        with col_form2:
+            balance = st.number_input(
+                t("single_balance"), min_value=0.0, value=50000.0, step=1000.0
+            )
+            est_salary = st.number_input(
+                t("single_salary"), min_value=0.0, value=60000.0, step=1000.0
+            )
+            num_products = st.selectbox(t("single_products"), [1, 2, 3, 4], index=1)
 
-    with col_form3:
-        geography = st.selectbox("Ülke", ["France", "Germany", "Spain"])
-        gender = st.selectbox("Cinsiyet", ["Male", "Female"])
-        has_cr_card = st.selectbox(
-            "Kredi Kartı Var mı?",
-            [1, 0],
-            format_func=lambda value: "Evet" if value == 1 else "Hayır",
-        )
-        is_active = st.selectbox(
-            "Aktif Müşteri mi?",
-            [1, 0],
-            format_func=lambda value: "Evet" if value == 1 else "Hayır",
-        )
+        with col_form3:
+            geography = st.selectbox(t("single_country"), ["France", "Germany", "Spain"])
+            gender = st.selectbox(t("single_gender"), ["Male", "Female"])
+            has_cr_card = st.selectbox(
+                t("single_credit_card"),
+                [1, 0],
+                format_func=lambda value: "Evet" if value == 1 else "Hayır",
+            )
+            is_active = st.selectbox(
+                t("single_active"),
+                [1, 0],
+                format_func=lambda value: "Evet" if value == 1 else "Hayır",
+            )
+        
+        analyze_col1, analyze_col2, analyze_col3 = st.columns([1,2,1])
+        with analyze_col2:
+            st.markdown("<br>", unsafe_allow_html=True)
+            analyze_clicked = st.button(f"🚀 {t('single_analyze')}", use_container_width=True, type="primary")
+
+    if analyze_clicked:
+        st.session_state.analyze_clicked = True
 
     return {
         "CreditScore": credit_score,
@@ -106,7 +116,6 @@ def _run_single_prediction(
         st.session_state.base_risk = churn_probability
         st.session_state.prediction_result = result
         st.session_state.analyze_clicked = True
-        st.session_state.agent_result = None  # Reset campaign when new analysis is run
         _append_risk_history(customer_data, churn_probability)
 
 
@@ -123,17 +132,17 @@ def _render_financial_impact(
     customer_value = customer_data["Balance"] + (customer_data["EstimatedSalary"] * 0.20)
     expected_loss = customer_value * (churn_probability / 100)
 
-    st.write("---")
-    st.subheader("💰 Finansal Etki Analizi (CLTV)")
-    fin_col1, fin_col2, fin_col3 = st.columns(3)
-    fin_col1.metric(label="Müşterinin Bankaya Değeri", value=f"€{customer_value:,.2f}")
-    fin_col2.metric(label="Ayrılma İhtimali", value=f"%{churn_probability:.1f}")
-    fin_col3.metric(
-        label="Beklenen Finansal Kayıp",
-        value=f"€{expected_loss:,.2f}",
-        delta="- Risk Tutarı",
-        delta_color="inverse",
-    )
+    with st.container(border=True):
+        st.subheader("💰 Finansal Etki Analizi (CLTV)", divider="gray")
+        fin_col1, fin_col2, fin_col3 = st.columns(3)
+        fin_col1.metric(label="Müşterinin Bankaya Değeri", value=f"€{customer_value:,.2f}")
+        fin_col2.metric(label="Ayrılma İhtimali", value=f"%{churn_probability:.1f}")
+        fin_col3.metric(
+            label="Beklenen Finansal Kayıp",
+            value=f"€{expected_loss:,.2f}",
+            delta="- Risk Tutarı",
+            delta_color="inverse",
+        )
 
 
 def _normalize_shap_values(shap_values: Any) -> np.ndarray:
@@ -265,148 +274,87 @@ def _render_model_output(
         local_scaler: Yüklü ölçekleyici nesne.
         expected_features: Modelin beklediği özellik listesi.
     """
-    st.write("---")
-    res_col1, res_col2 = st.columns([1, 1])
+    with st.container(border=True):
+        st.subheader(f"📊 {t('analysis_results')} & Model Çıktısı", divider="gray")
+        res_col1, res_col2 = st.columns([1, 1])
 
-    with res_col1:
-        st.subheader("📊 Model Çıktısı")
-        st.metric(label="Risk Kategorisi", value=result["risk_seviyesi"])
-        _render_shap_analysis(customer_data, local_model, local_scaler, expected_features)
+        with res_col1:
+            st.metric(label="Risk Kategorisi", value=result["risk_seviyesi"])
+            _render_shap_analysis(customer_data, local_model, local_scaler, expected_features)
 
-    with res_col2:
-        st.plotly_chart(_create_risk_gauge(churn_probability), use_container_width=True)
+        with res_col2:
+            st.plotly_chart(_create_risk_gauge(churn_probability), use_container_width=True)
 
 
 def _render_ai_campaign_messages(agent_result: dict[str, Any]) -> None:
-    """LLM kampanya mesajlarını veya kural tabanlı mesajı gösterir."""
-    import urllib.parse
-    import json
-    
+    """LLM kampanya mesajlarını veya kural tabanlı mesajı gösterir.
+
+    Args:
+        agent_result: Ajan akışından dönen kampanya sonucu.
+    """
+    gemini_msg = agent_result.get("gemini_campaign")
     groq_msg = agent_result.get("groq_campaign")
+    openai_msg = agent_result.get("openai_campaign")
 
-    def create_mailto_url(body_text, email_address=""):
-        if not body_text:
-            return ""
-        
-        # Profesyonel şablon
-        template = f"""Değerli Müşterimiz,
+    if gemini_msg or groq_msg or openai_msg:
+        st.markdown("### 🤖 Yapay Zeka Kampanya Önerileri Karşılaştırması")
+        ai_cols = st.columns(2)
 
-Size özel hazırladığımız yeni fırsatımız:
+        with ai_cols[0]:
+            st.markdown("#### 🔵 Google Gemini")
+            if gemini_msg:
+                st.success(gemini_msg)
+            else:
+                st.warning("Gemini API aktif değil veya yanıt vermedi.")
 
-{body_text}
-
-Detaylı bilgi için şubelerimizi ziyaret edebilir veya mobil uygulamamızı kullanabilirsiniz.
-
-Saygılarımızla,
-Müşteri İlişkileri Yönetimi
-"""
-        safe_body = urllib.parse.quote(template)
-        safe_subject = urllib.parse.quote("Size Özel Kampanya Fırsatı")
-        return f"mailto:{email_address}?subject={safe_subject}&body={safe_body}"
-
-    if groq_msg:
-        st.markdown("### 🤖 Groq Llama3 Profesyonel Kampanya Senaryoları", help="Yapay zeka modeli tarafından üretilen kişiselleştirilmiş çoklu kampanya stratejileri")
-        
-        try:
-            # Llama3'ten gelen JSON çıktısını parse et
-            data = json.loads(groq_msg)
-            campaigns = data.get("campaigns", [])
-            
-            if campaigns:
-                # Kampanyaları göster ve seçtir
-                recipient_email = st.text_input("📧 Gönderilecek E-Posta Adresi (Opsiyonel)", placeholder="musteri@ornek.com", help="Boş bırakırsanız e-posta uygulamanızda adresi kendiniz girebilirsiniz.")
-                
-                campaign_titles = [c.get("title", f"Kampanya {i+1}") for i, c in enumerate(campaigns)]
-                selected_title = st.radio("✨ Uygulamak İstediğiniz Kampanyayı Seçin:", campaign_titles)
-                
-                # Seçilen kampanyanın detaylarını bul
-                selected_campaign = next((c for c in campaigns if c.get("title", "") == selected_title), campaigns[0])
-                
-                # Seçili kampanyayı profesyonel bir kartta göster
-                with st.container(border=True):
-                    st.markdown(f"### {selected_campaign.get('title', 'Özel Kampanya')}")
-                    
-                    v_col1, v_col2 = st.columns([1.5, 1])
-                    
-                    with v_col1:
-                        st.caption(f"🎯 **Strateji Özeti:** {selected_campaign.get('description', '')}")
-                        st.info(f"\"{selected_campaign.get('body', '')}\"")
-                        
-                        st.markdown("##### 🚀 Hedeflenen Eylemler")
-                        st.markdown("- 📞 Hızlı İletişim\n- 💎 Değer Odaklı Teklif\n- ⏳ Aciliyet Hissi (FOMO)")
-                        
-                        st.link_button("✉️ Seçili Kampanyayı E-Posta Olarak Gönder", create_mailto_url(selected_campaign.get('body', ''), recipient_email), type="primary")
-                        
-                    with v_col2:
-                        import numpy as np
-                        import plotly.graph_objects as go
-                        
-                        # Kampanya ismine göre tutarlı rastgele veriler üret
-                        np.random.seed(len(selected_campaign.get('title', 'abc')) * 42)
-                        
-                        categories = ['Maliyet<br>Verimliliği', 'Müşteri<br>Etkisi', 'Dönüşüm<br>Hızı', 'Sadakat<br>Kazanımı', 'Özel Hissettirme']
-                        r_values = [np.random.randint(65, 98) for _ in range(5)]
-                        r_values.append(r_values[0]) # Dairesel tamamlanma için
-                        theta_cats = categories + [categories[0]]
-                        
-                        fig_radar = go.Figure()
-                        fig_radar.add_trace(go.Scatterpolar(
-                            r=r_values,
-                            theta=theta_cats,
-                            fill='toself',
-                            name='Kampanya Gücü',
-                            line_color='#e67e22',
-                            fillcolor='rgba(230, 126, 34, 0.4)'
-                        ))
-                        fig_radar.update_layout(
-                            polar=dict(
-                                radialaxis=dict(visible=False, range=[0, 100])
-                            ),
-                            showlegend=False,
-                            height=250,
-                            margin=dict(l=30, r=30, t=10, b=10)
-                        )
-                        st.markdown("##### 📊 Kampanya Etki Profili")
-                        st.plotly_chart(fig_radar, use_container_width=True)
-                return
-        except json.JSONDecodeError:
-            # Eğer JSON parse edilemezse fallback (Düz metin)
-            st.warning("Yapay zeka çoklu kampanya formatını sağlayamadı, düz metin gösteriliyor.")
-            with st.container(border=True):
-                recipient_email = st.text_input("📧 Gönderilecek E-Posta Adresi (Opsiyonel)", placeholder="musteri@ornek.com", key="fallback_email")
+        with ai_cols[1]:
+            if groq_msg and openai_msg:
+                st.markdown("#### 🟠 Groq (Llama3)")
                 st.info(groq_msg)
-                st.link_button("✉️ E-Posta Gönder", create_mailto_url(groq_msg, recipient_email), type="primary")
-            return
+                st.markdown("#### 🟢 OpenAI")
+                st.info(openai_msg)
+            elif groq_msg:
+                st.markdown("#### 🟠 Groq (Llama3)")
+                st.info(groq_msg)
+            elif openai_msg:
+                st.markdown("#### 🟢 OpenAI")
+                st.info(openai_msg)
+            else:
+                st.markdown("#### 🟠 Diğer Modeller")
+                st.warning("Groq/OpenAI API aktif değil veya yanıt vermedi.")
+        return
 
-    # Fallback / Kural tabanlı
-    with st.container(border=True):
-        st.markdown("#### 📜 Sistem (Kural Tabanlı) Kampanya Önerisi")
-        campaign_msg = agent_result.get('campaign_message', '')
-        if campaign_msg:
-            recipient_email = st.text_input("📧 Gönderilecek E-Posta Adresi", placeholder="musteri@ornek.com", key="rule_based_email")
-            st.warning(f"**Mesaj:** {campaign_msg}")
-            st.link_button("✉️ E-Posta Gönder", create_mailto_url(campaign_msg, recipient_email), type="primary")
-        else:
-            st.warning("Henüz mesaj oluşturulamadı.")
+    st.markdown(
+        f"> 📧 **Kural Tabanlı Kampanya Mesajı:** "
+        f"{agent_result.get('campaign_message', '')}"
+    )
 
 
 def _render_campaign_details(agent_result: dict[str, Any]) -> None:
-    """Ajan kampanya sonucunun detaylarını render eder."""
-    with st.expander("📋 360° AI Karar Mekanizması ve Senaryolar", expanded=True):
+    """Ajan kampanya sonucunun detaylarını render eder.
+
+    Args:
+        agent_result: Ajan akışından dönen kampanya sonucu.
+    """
+    with st.expander("📋 Kampanya Detayları (Ajan Çıktısı)", expanded=True):
         ag_c1, ag_c2, ag_c3 = st.columns(3)
         contact_channel = agent_result.get("contact_channel", "—")
         contact_parts = contact_channel.split()
 
-        ag_c1.metric("🎯 Kampanya Hedefi", agent_result.get("campaign_type", "—"))
-        ag_c2.metric("💰 Etki Bütçesi", f"€{agent_result.get('estimated_budget', 0):,.0f}")
-        ag_c3.metric("📣 Kanal", contact_parts[1] if len(contact_parts) > 1 else contact_channel)
+        ag_c1.metric("🎯 Kampanya Türü", agent_result.get("campaign_type", "—"))
+        ag_c2.metric(
+            "💰 Tahmini Bütçe",
+            f"€{agent_result.get('estimated_budget', 0):,.0f}",
+        )
+        ag_c3.metric(
+            "📢 İletişim",
+            contact_parts[1] if len(contact_parts) > 1 else "Bildirim",
+        )
 
-        st.markdown("---")
-        st.info(f"**💡 Tavsiye Edilen Sistem Aksiyonu:** {agent_result.get('recommended_action')}")
+        st.info(f"**Önerilen Sistem Aksiyonu:** {agent_result.get('recommended_action')}")
+        _render_ai_campaign_messages(agent_result)
         st.caption(f"Aciliyet: {agent_result.get('urgency', '—').upper()}")
 
-        st.markdown("---")
-        _render_ai_campaign_messages(agent_result)
 
 def _render_retention_campaign(
     customer_data: dict[str, Any],
@@ -424,10 +372,6 @@ def _render_retention_campaign(
         return
 
     st.warning("⚠️ Müşterinin ayrılma riski yüksek. Acil aksiyon alınması önerilir.")
-    
-    if "agent_result" not in st.session_state:
-        st.session_state.agent_result = None
-        
     if st.button("🤖 AI Kurtarma Kampanyası Üret", use_container_width=True):
         with st.spinner("AI Kampanya Önerisi Hazırlanıyor..."):
             agent_result = run_agent(
@@ -436,11 +380,8 @@ def _render_retention_campaign(
                 risk_level=result["risk_seviyesi"],
                 customer_data=customer_data,
             )
-            st.session_state.agent_result = agent_result
             st.success("✨ Kampanya Önerisi Hazır!")
-            
-    if st.session_state.agent_result is not None:
-        _render_campaign_details(st.session_state.agent_result)
+            _render_campaign_details(agent_result)
 
 
 def _render_prediction_result(
@@ -485,8 +426,8 @@ def render_tab_single_analysis(
     """
     customer_data = _collect_customer_form_data()
 
-    if st.button("🔍 Risk Analizi Yap", use_container_width=True):
-        _run_single_prediction(customer_data, local_model, local_scaler, expected_features)
-
     if st.session_state.get("analyze_clicked", False):
+        if "current_customer" not in st.session_state or st.session_state.current_customer != customer_data:
+            _run_single_prediction(customer_data, local_model, local_scaler, expected_features)
+        
         _render_prediction_result(local_model, local_scaler, expected_features)

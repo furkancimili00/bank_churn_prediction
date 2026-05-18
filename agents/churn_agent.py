@@ -17,9 +17,7 @@ class CustomerState(TypedDict):
     contact_channel: Optional[str]
     campaign_type: Optional[str]
     campaign_message: Optional[str]
-    gemini_campaign: Optional[str]
     groq_campaign: Optional[str]
-    openai_campaign: Optional[str]
     estimated_budget: Optional[float]
     urgency: Optional[str]
     customer_data: Optional[dict]
@@ -111,13 +109,12 @@ def generate_campaign(state: CustomerState) -> CustomerState:
     # LLM (Yapay Zeka) Destekli Çapraz Kampanya (Cross-Campaign) Üretimi
     try:
         import streamlit as st
-        gemini_key = st.secrets.get("llm", {}).get("gemini_api_key", "")
-        openai_key = st.secrets.get("llm", {}).get("openai_api_key", "")
         groq_key = st.secrets.get("llm", {}).get("groq_api_key", "")
 
-        if gemini_key or openai_key or groq_key:
+        if groq_key:
             prompt = f"""Sen bir bankanın çapraz satış ve müşteri elde tutma uzmanısın.
-Aşağıdaki müşteri profilini analiz et ve ona özel, reddedemeyeceği kısa bir SMS/E-posta mesajı üret.
+Aşağıdaki müşteri profilini analiz et ve ona özel, 3 farklı kampanya senaryosu üret.
+Örneğin: Agresif İndirim, Sadakat Puanı, Özel Hizmet/VIP gibi stratejiler düşün.
 
 Müşteri Profili:
 - Yaş: {c_data.get('Age')}
@@ -127,46 +124,30 @@ Müşteri Profili:
 - Ürün Sayısı: {c_data.get('NumOfProducts')}
 - Churn Riski: %{prob * 100:.1f} ({state['risk_level']})
 
-Sadece gönderilecek "Kampanya Mesajını" yaz. En fazla 3 cümle olsun. Etkileyici, acil bir eylem çağrısı (Call to Action) içersin."""
+ÖNEMLİ: Çıktıyı KESİNLİKLE aşağıdaki JSON formatında ver, başka hiçbir metin ekleme. JSON yapısı tam olarak şu şekilde olmalı:
+{{
+  "campaigns": [
+    {{
+      "title": "Kampanya Başlığı (Örn: 🌟 VIP Ayrıcalık Paketi)",
+      "description": "Kampanyanın kısa açıklaması",
+      "body": "Gönderilecek e-posta veya SMS mesajı gövdesi. Etkileyici, acil bir eylem çağrısı (Call to Action) içersin."
+    }}
+  ]
+}}"""
 
-            if gemini_key:
-                try:
-                    import google.generativeai as genai
-                    genai.configure(api_key=gemini_key)
-                    model = genai.GenerativeModel("gemini-2.0-flash")
-                    response = model.generate_content(prompt)
-                    state["gemini_campaign"] = f"{response.text.strip()}"
-                    logger.info("Gemini ile özel kampanya mesajı üretildi.")
-                except Exception as e:
-                    logger.error(f"Gemini hatası: {e}")
-                    
-            if groq_key:
-                try:
-                    from openai import OpenAI
-                    client = OpenAI(api_key=groq_key, base_url="https://api.groq.com/openai/v1")
-                    response = client.chat.completions.create(
-                        model="llama-3.3-70b-versatile",
-                        messages=[{"role": "user", "content": prompt}],
-                        max_tokens=150,
-                    )
-                    state["groq_campaign"] = f"{response.choices[0].message.content.strip()}"
-                    logger.info("Groq ile özel kampanya mesajı üretildi.")
-                except Exception as e:
-                    logger.error(f"Groq hatası: {e}")
-                    
-            if openai_key:
-                try:
-                    from openai import OpenAI
-                    client = OpenAI(api_key=openai_key)
-                    response = client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        messages=[{"role": "user", "content": prompt}],
-                        max_tokens=150,
-                    )
-                    state["openai_campaign"] = f"{response.choices[0].message.content.strip()}"
-                    logger.info("OpenAI ile özel kampanya mesajı üretildi.")
-                except Exception as e:
-                    logger.error(f"OpenAI hatası: {e}")
+            try:
+                from openai import OpenAI
+                client = OpenAI(api_key=groq_key, base_url="https://api.groq.com/openai/v1")
+                response = client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": prompt}],
+                    response_format={"type": "json_object"},
+                    max_tokens=1000,
+                )
+                state["groq_campaign"] = f"{response.choices[0].message.content.strip()}"
+                logger.info("Groq ile çoklu kampanya mesajı üretildi.")
+            except Exception as e:
+                logger.error(f"Groq hatası: {e}")
 
     except Exception as e:
         logger.warning(f"LLM Kampanya üretimi başarısız oldu, kural tabanlı mesaj kullanılıyor. Hata: {e}")
@@ -266,9 +247,7 @@ def run_agent(
         "contact_channel": None,
         "campaign_type": None,
         "campaign_message": None,
-        "gemini_campaign": None,
         "groq_campaign": None,
-        "openai_campaign": None,
         "estimated_budget": None,
         "urgency": None,
         "customer_data": customer_data or {},
@@ -333,43 +312,7 @@ def _generate_llm_report(context: dict) -> str:
     try:
         import streamlit as st
 
-        # Gemini API denemesi
-        gemini_key = st.secrets.get("llm", {}).get("gemini_api_key", "")
-        openai_key = st.secrets.get("llm", {}).get("openai_api_key", "")
         groq_key = st.secrets.get("llm", {}).get("groq_api_key", "")
-
-        if gemini_key:
-            try:
-                import google.generativeai as genai
-                genai.configure(api_key=gemini_key)
-                model = genai.GenerativeModel("gemini-2.0-flash")
-
-                prompt = f"""Sen bir banka şube müdürüne rapor sunan kıdemli veri analistisin.
-Aşağıdaki müşteri churn analiz verilerini kullanarak Türkçe, profesyonel bir yönetim özeti raporu yaz.
-
-VERİLER:
-- Toplam müşteri: {context['total_customers']}
-- Yüksek riskli: {context['high_risk_customers']} (%{context['high_risk_percentage']:.1f})
-- Orta riskli: {context['medium_risk_customers']}
-- Düşük riskli: {context['low_risk_customers']}
-- Toplam beklenen finansal kayıp: €{context['total_expected_loss']:,.2f}
-- Ortalama risk skoru: %{context['avg_risk']:.1f}
-- En riskli 5 müşteri:
-{context['top5_text']}
-
-RAPOR FORMATI:
-1. Markdown formatında yaz
-2. Başlıklar ve alt başlıklar kullan
-3. Mevcut durum analizi, stratejik aksiyon planı ve önceliklendirme bölümleri olsun
-4. Somut ve uygulanabilir öneriler ver
-5. Emoji kullanarak görsel zenginlik kat"""
-
-                response = model.generate_content(prompt)
-                logger.info("LLM raporu başarıyla oluşturuldu (Gemini)")
-                return response.text
-            except Exception as e:
-                logger.warning(f"Gemini API hatası, fallback'e geçiliyor: {e}")
-                return None
 
         if groq_key:
             try:
@@ -405,36 +348,6 @@ RAPOR FORMATI:
                 return response.choices[0].message.content
             except Exception as e:
                 logger.warning(f"Groq API hatası, fallback'e geçiliyor: {e}")
-                return None
-
-        # OpenAI API denemesi
-        if openai_key:
-            try:
-                from openai import OpenAI
-                client = OpenAI(api_key=openai_key)
-
-                prompt = f"""Sen bir banka şube müdürüne rapor sunan kıdemli veri analistisin.
-Aşağıdaki müşteri churn analiz verilerini kullanarak Türkçe, profesyonel bir yönetim özeti raporu yaz.
-
-VERİLER:
-- Toplam müşteri: {context['total_customers']}
-- Yüksek riskli: {context['high_risk_customers']} (%{context['high_risk_percentage']:.1f})
-- Orta riskli: {context['medium_risk_customers']}
-- Düşük riskli: {context['low_risk_customers']}
-- Toplam beklenen finansal kayıp: €{context['total_expected_loss']:,.2f}
-- Ortalama risk skoru: %{context['avg_risk']:.1f}
-
-Markdown formatında, başlıklı, somut öneriler içeren bir rapor oluştur."""
-
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": prompt}],
-                    max_tokens=1500,
-                )
-                logger.info("LLM raporu başarıyla oluşturuldu (OpenAI)")
-                return response.choices[0].message.content
-            except Exception as e:
-                logger.warning(f"OpenAI API hatası, fallback'e geçiliyor: {e}")
                 return None
 
         logger.info("LLM API anahtarı bulunamadı, kural tabanlı rapora geçiliyor")

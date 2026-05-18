@@ -38,3 +38,18 @@
 {"timestamp": "2026-05-09T17:22:12.289942", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
 {"timestamp": "2026-05-09T17:22:34.768614", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
 {"timestamp": "2026-05-09T17:22:34.782703", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:13:26.145729", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:13:26.163835", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:29:05.821716", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:29:05.839878", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:32:09.996847", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:32:10.021553", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:38:52.448792", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T13:38:52.467061", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T18:31:44.713956", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T18:31:44.727901", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T18:39:12.988443", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T18:39:13.004093", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T23:31:45.720959", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 2, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T23:31:45.740889", "event_type": "batch_predict", "user": "system", "details": {"musteri_sayisi": 3, "yuksek_riskli": 1}}
+{"timestamp": "2026-05-12T23:51:46.586681", "event_type": "logout", "user": "system", "details": {"user": "admin"}}

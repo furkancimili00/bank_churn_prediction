@@ -1,0 +1,34 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{a4paper, margin=2.54cm}
+
+\title{Bank Customer Churn Prediction Using Machine Learning Techniques}
+\author{Enis Çelik, Furkan Çimili, Ahmet Arif Sarı \\ Advisor: Dr.Öğr.Üy.Gökhan Göksel}
+\date{April 2026}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+This document serves as the foundation for the IEEE SIU 2026 submission and the comprehensive 35-40 page thesis report. It details the XGBoost and SHAP-based methodology applied to mitigate bank customer churn with high algorithmic fairness.
+\end{abstract}
+
+\section{Introduction}
+Customer churn represents a pervasive challenge with attrition rates ranging between 10-30\%.
+
+\section{Methodology}
+We employed XGBoost, Random Forest, and Logistic Regression alongside SMOTE and ADASYN for imbalance correction. Model explanations are provided by SHAP.
+
+\section{System Architecture}
+The system architecture follows the C4 model rendered in Structurizr DSL, utilizing SQLite for data logging, FastAPI/Flask for the backend, and Streamlit for the user interface.
+
+\section{Results}
+Preliminary analysis indicates F1-scores exceeding 0.85 with minimal disparities across demographic lines.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

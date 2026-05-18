@@ -2064,3 +2064,21 @@ violations {
 2026-05-09 17:22:35 | DEBUG    | services.audit_service:log_event:51 - Denetim kaydı: predict
 2026-05-09 17:22:35 | DEBUG    | services.audit_service:log_event:51 - Denetim kaydı: test
 2026-05-09 17:22:35 | INFO     | services.audit_service:clear_audit_log:124 - Denetim logu temizlendi
+2026-05-09 17:46:25 | INFO     | __main__:start_services:16 - Banka Churn Projesi Başlatılıyor...
+2026-05-09 17:46:25 | INFO     | __main__:start_services:17 - =======================================
+2026-05-09 17:46:25 | INFO     | __main__:start_services:20 - FastAPI (Backend API) başlatılıyor... (Port: 8000)
+2026-05-09 17:46:28 | SUCCESS  | __main__:start_services:33 - FastAPI başarıyla başlatıldı: http://127.0.0.1:8000
+2026-05-09 17:46:28 | INFO     | __main__:start_services:34 - API Dokümantasyonu (Swagger): http://127.0.0.1:8000/docs
+2026-05-09 17:46:28 | INFO     | __main__:start_services:37 - Streamlit (Frontend Dashboard) başlatılıyor...
+2026-05-09 17:46:28 | SUCCESS  | __main__:start_services:42 - TÜM SİSTEM AKTİF!
+2026-05-09 17:46:28 | INFO     | __main__:start_services:43 - Uygulamayı kapatmak için terminalde CTRL+C tuşlarına basabilirsiniz.
+2026-05-09 17:46:29 | INFO     | api.ml_model:load_api_model:30 - Model basariyla yuklendi. Ozellik sayisi: 11
+2026-05-09 17:51:15 | INFO     | __main__:start_services:16 - Banka Churn Projesi Başlatılıyor...
+2026-05-09 17:51:15 | INFO     | __main__:start_services:17 - =======================================
+2026-05-09 17:51:15 | INFO     | __main__:start_services:20 - FastAPI (Backend API) başlatılıyor... (Port: 8000)
+2026-05-09 17:51:18 | SUCCESS  | __main__:start_services:33 - FastAPI başarıyla başlatıldı: http://127.0.0.1:8000
+2026-05-09 17:51:18 | INFO     | __main__:start_services:34 - API Dokümantasyonu (Swagger): http://127.0.0.1:8000/docs
+2026-05-09 17:51:18 | INFO     | __main__:start_services:37 - Streamlit (Frontend Dashboard) başlatılıyor...
+2026-05-09 17:51:18 | SUCCESS  | __main__:start_services:42 - TÜM SİSTEM AKTİF!
+2026-05-09 17:51:18 | INFO     | __main__:start_services:43 - Uygulamayı kapatmak için terminalde CTRL+C tuşlarına basabilirsiniz.
+2026-05-09 17:51:20 | INFO     | api.ml_model:load_api_model:30 - Model basariyla yuklendi. Ozellik sayisi: 11

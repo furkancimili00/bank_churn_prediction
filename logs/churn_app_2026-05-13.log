@@ -1,0 +1,388 @@
+2026-05-13 00:03:28 | INFO     | __main__:start_services:16 - Banka Churn Projesi Başlatılıyor...
+2026-05-13 00:03:28 | INFO     | __main__:start_services:17 - =======================================
+2026-05-13 00:03:28 | INFO     | __main__:start_services:20 - FastAPI (Backend API) başlatılıyor... (Port: 8000)
+2026-05-13 00:03:31 | SUCCESS  | __main__:start_services:33 - FastAPI başarıyla başlatıldı: http://127.0.0.1:8000
+2026-05-13 00:03:31 | INFO     | __main__:start_services:34 - API Dokümantasyonu (Swagger): http://127.0.0.1:8000/docs
+2026-05-13 00:03:31 | INFO     | __main__:start_services:37 - Streamlit (Frontend Dashboard) başlatılıyor...
+2026-05-13 00:03:31 | SUCCESS  | __main__:start_services:42 - TÜM SİSTEM AKTİF!
+2026-05-13 00:03:31 | INFO     | __main__:start_services:43 - Uygulamayı kapatmak için terminalde CTRL+C tuşlarına basabilirsiniz.
+2026-05-13 00:03:36 | INFO     | api.ml_model:load_api_model:30 - Model basariyla yuklendi. Ozellik sayisi: 11
+2026-05-13 16:23:45 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:23:45 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:23:45 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:23:45 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:23:45 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:23:45 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:23:45 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:23:45 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:23:45 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:23:45 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:23:45 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:23:45 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:23:45 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:23:46 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:23:46 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:23:55 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:23:55 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:23:55 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:23:55 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:23:55 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:23:55 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:23:55 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:23:55 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:22 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:22 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:22 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:22 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:22 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:22 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:22 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:22 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:22 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:22 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:30 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:30 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:30 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:30 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:30 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:30 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:31 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:31 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:31 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:31 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:32 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:32 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:32 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:32 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:32 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:32 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:32 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:32 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:32 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:32 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:33 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:33 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:33 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:34 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:34 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:34 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:34 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:34 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:34 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:34 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:37 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:37 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:37 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:37 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:37 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:38 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:38 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:38 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:38 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:38 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:38 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:38 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:38 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:38 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:38 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:38 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:39 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:39 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:39 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:40 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:40 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:41 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:41 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:41 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:41 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:41 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:42 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:42 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:42 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:42 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:42 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:43 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:43 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:43 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:44 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:44 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:44 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:44 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:44 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:44 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:44 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:45 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:46 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:46 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:46 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:46 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:46 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:46 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:46 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:46 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:47 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:47 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:47 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:47 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:47 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:47 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:47 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:47 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:47 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:51 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:52 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:52 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:52 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:52 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:52 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:52 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:24:55 | INFO     | agents.churn_agent:assess_risk:54 - Risk değerlendirmesi: acil (prob=0.82)
+2026-05-13 16:24:55 | DEBUG    | agents.churn_agent:select_channel:76 - İletişim kanalı seçildi: 📞 Telefon + 📧 E-posta (Müşteri Temsilcisi Ataması)
+2026-05-13 16:24:55 | ERROR    | agents.churn_agent:generate_campaign:141 - Gemini hatası: No module named 'google.generativeai'
+2026-05-13 16:24:55 | ERROR    | agents.churn_agent:generate_campaign:155 - Groq hatası: No module named 'openai'
+2026-05-13 16:24:55 | DEBUG    | agents.churn_agent:calculate_budget:195 - Bütçe hesaplandı: €500.0
+2026-05-13 16:24:55 | INFO     | agents.churn_agent:run_agent:278 - Ajan akışı tamamlandı: Acil Elde Tutma Paketi (bütçe: €500)
+2026-05-13 16:24:55 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:24:55 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:24:55 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:24:55 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:24:55 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:24:55 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:24:55 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:24:55 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:55 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:55 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:55 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:55 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:24:55 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:24:56 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:24:56 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:24:56 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:24:56 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:25:25 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:25:25 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:25:25 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:25:25 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:25:25 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:25:25 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:25:25 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:25:25 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:25:25 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:25:25 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:25:25 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:25:26 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:25:26 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:25:26 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:25:26 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:25:26 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:25:26 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:26:13 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:26:13 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:26:13 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:26:13 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:26:13 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:26:13 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:26:13 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:26:13 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:26:14 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:26:14 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:26:17 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:26:17 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:26:17 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:26:17 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:26:17 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:26:17 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:26:17 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:26:17 | INFO     | services.segmentation_service:perform_segmentation:100 - Segmentasyon tamamlandı: 5 küme, 500 müşteri
+2026-05-13 16:26:17 | DEBUG    | services.segmentation_service:create_segment_summary_table:228 - Segment özet tablosu oluşturuldu
+2026-05-13 16:26:17 | DEBUG    | services.segmentation_service:create_pca_scatter:139 - PCA scatter plot oluşturuldu
+2026-05-13 16:26:17 | DEBUG    | services.segmentation_service:create_segment_churn_bar:263 - Segment churn bar grafiği oluşturuldu
+2026-05-13 16:26:17 | DEBUG    | services.segmentation_service:create_segment_profile:178 - Segment radar grafiği oluşturuldu
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:26:17 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:26:18 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:26:18 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 5 benzer müşteri bulundu
+2026-05-13 16:26:43 | DEBUG    | services.eda_service:get_summary_statistics:305 - Özet istatistikler hesaplandı: 500 müşteri
+2026-05-13 16:26:43 | DEBUG    | services.eda_service:create_correlation_heatmap:80 - Korelasyon ısı haritası oluşturuldu
+2026-05-13 16:26:43 | DEBUG    | services.eda_service:create_distribution_histograms:138 - Dağılım histogramları oluşturuldu
+2026-05-13 16:26:43 | DEBUG    | services.eda_service:create_churn_boxplots:192 - Boxplot grafikleri oluşturuldu
+2026-05-13 16:26:43 | DEBUG    | services.eda_service:create_churn_rate_by_category:277 - Kategorik churn oranı grafiği oluşturuldu
+2026-05-13 16:26:43 | DEBUG    | services.eda_service:create_categorical_analysis:224 - Kategorik çapraz analiz (sunburst) oluşturuldu
+2026-05-13 16:26:43 | INFO     | services.model_metrics_service:compute_all_metrics:76 - Model metrikleri hesaplandı — F1: 1.0000, ROC-AUC: 1.0000
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Gender bazlı churn oranları hesaplandı
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Gender): 1.0036 (✅ Hedef karşılandı)
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_group_churn_rates:66 - Geography bazlı churn oranları hesaplandı
+2026-05-13 16:26:44 | INFO     | services.fairness_service:compute_disparate_impact:107 - Disparate Impact (Geography): 1.2494 (❌ Hedef karşılanmadı)
+2026-05-13 16:26:44 | DEBUG    | services.customer_profile_service:create_shap_waterfall:137 - SHAP waterfall grafiği oluşturuldu
+2026-05-13 16:26:44 | DEBUG    | services.customer_profile_service:find_similar_customers:195 - 8 benzer müşteri bulundu

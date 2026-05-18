@@ -93,6 +93,9 @@ def create_shap_waterfall(
         Optional[go.Figure]: Waterfall figürü veya None.
     """
     try:
+        import sys
+        sys.modules["transformers"] = None
+        sys.modules["tensorflow"] = None
         import shap
         from core.utils import preprocess_data
 
